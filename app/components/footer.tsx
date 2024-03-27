@@ -22,7 +22,7 @@ export function Footer() {
       </div>
       <div className="flex items-center justify-center gap-2">
         <a
-          href="https://github.com/ianlucas/cs2-inventory-simulator"
+          href="https://github.com/crashzk/cs2-inventory-simulator"
           className="flex items-center gap-1 transition-all hover:text-blue-500"
           target="_blank"
         >
