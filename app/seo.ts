@@ -15,8 +15,8 @@ export function getSeoMeta({
   appUrl: string;
   appSiteName: string;
 }) {
-  const appDescription = "ZK Servidores™ | Skin Changer. Crie itens, abra caixas e raspe adesivos - organize e planeje o inventário dos seus sonhos em nossos servidores";
-  const appTitle = "Aproveite do melhor simulador de inventário do Counter-Strike 2";
+  const appDescription = "Crie itens, abra caixas e raspe adesivos - Organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
+  const appTitle = "ZK Servidores™ | Skin Changer";
   const appWideImage = `${appUrl}/images/inventory-simulator.png`;
 
   return [
