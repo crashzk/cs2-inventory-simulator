@@ -16,7 +16,7 @@ export function Footer() {
     <footer className="my-8 select-none text-sm text-neutral-400 drop-shadow-sm">
       <div className="text-center">
         <span>
-          &copy; {new Date().getFullYear()} cstrike's Inventory Simulator
+          &copy; {new Date().getFullYear()} ZK Servidores™ | Melhores Servidores da Comunidade BR
         </span>
       </div>
       <div className="flex items-center justify-center gap-2">
@@ -29,16 +29,14 @@ export function Footer() {
           Source Code
         </a>
         {buildLastCommit !== undefined && (
-          <>
             &middot;
             <a
               className="transition-all hover:text-blue-500"
-              href={`https://github.com/ianlucas/cs2-inventory-simulator/commit/${buildLastCommit}`}
+              href={`https://github.com/crashzk/cs2-inventory-simulator/commit/${buildLastCommit}`}
               target="_blank"
             >
               {buildLastCommit.substring(0, 7)}
             </a>
-          </>
         )}
       </div>
     </footer>

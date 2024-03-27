@@ -16,8 +16,8 @@ export function getSeoMeta({
   appSiteName: string;
 }) {
   const appDescription =
-    "Counter-Strike 2 Inventory Simulator. Craft items, open cases, and scrape stickers - organize and plan your dream inventory.";
-  const appTitle = "The best free, Counter-Strike 2 Inventory Simulator";
+    "ZK Servidores™ | Skin Changer. Crie itens, abra caixas e raspe adesivos - organize e planeje o inventário dos seus sonhos em nossos servidores";
+  const appTitle = "Aproveite do melhor simulador de inventário do Counter-Strike 2";
   const appWideImage = `${appUrl}/images/inventory-simulator.png`;
 
   return [
