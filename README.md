@@ -5,7 +5,7 @@
 ##### Fork: [CS2 Inventory Simulator](https://github.com/ianlucas/cs2-inventory-simulator)
 
 ## Features
-- **Steam authentication:** Enables Steam players to sync their inventories.
+- **Steam Authentication:** Enables Steam players to sync their inventories.
 - **Craft Items:** Add items to your inventory, including Weapons, Knives, Gloves, Stickers, Agents, Patches, Music Kits, Graffiti, Pins, Cases, Keys, and Tools.
 - **Equip Items:** Equip items as you would do in-game.
 - **Case Opening:** Unlock cases by using Cases and their Keys.
