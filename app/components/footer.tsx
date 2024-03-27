@@ -16,7 +16,8 @@ export function Footer() {
     <footer className="my-8 select-none text-sm text-neutral-400 drop-shadow-sm">
       <div className="text-center">
         <span>
-          &copy; {new Date().getFullYear()} ZK Servidores™ | Melhores Servidores da Comunidade BR
+		  ZK Servidores™ - Melhores Servidores da Comunidade BR <br/>
+		  &copy; 2017 - {new Date().getFullYear()} | Todos os direitos reservados
         </span>
       </div>
       <div className="flex items-center justify-center gap-2">
