@@ -9,7 +9,7 @@ import { useRootContext } from "./root-context";
 
 export function Footer() {
   const {
-    rules: { buildLastCommit }
+    rules: {  }
   } = useRootContext();
 
   return (
@@ -29,7 +29,7 @@ export function Footer() {
           <FontAwesomeIcon icon={faGithub} className="h-4" />
           Source Code
         </a>
-        buildLastCommit !== undefined && (
+        {buildLastCommit !== undefined && (
           <>
             &middot;
             <a
@@ -40,7 +40,7 @@ export function Footer() {
               {buildLastCommit.substring(0, 7)}
             </a>
           </>
-        )
+        )}
       </div>
     </footer>
   );
