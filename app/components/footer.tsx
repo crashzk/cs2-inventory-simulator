@@ -29,6 +29,7 @@ export function Footer() {
           Source Code
         </a>
         {buildLastCommit !== undefined && (
+          <>
             &middot;
             <a
               className="transition-all hover:text-blue-500"
@@ -37,6 +38,7 @@ export function Footer() {
             >
               {buildLastCommit.substring(0, 7)}
             </a>
+          </>
         )}
       </div>
     </footer>
