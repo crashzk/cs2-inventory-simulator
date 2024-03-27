@@ -29,7 +29,7 @@ export function Footer() {
           <FontAwesomeIcon icon={faGithub} className="h-4" />
           Source Code
         </a>
-        {buildLastCommit !== undefined && (
+        buildLastCommit !== undefined && (
           <>
             &middot;
             <a
@@ -40,7 +40,7 @@ export function Footer() {
               {buildLastCommit.substring(0, 7)}
             </a>
           </>
-        )}
+        )
       </div>
     </footer>
   );
