@@ -15,7 +15,7 @@ export function getSeoMeta({
   appUrl: string;
   appSiteName: string;
 }) {
-  const appDescription = "Crie itens, abra caixas e raspe adesivos - organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
+  const appDescription = "Crie itens, abra caixas e raspe stickers - organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
   const appTitle = "ZK Servidores™ | Skin Changer";
   const appWideImage = `${appUrl}/images/inventory-simulator.png`;
 
