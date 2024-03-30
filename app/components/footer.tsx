@@ -20,30 +20,6 @@ export function Footer() {
 		  &copy; 2017 - {new Date().getFullYear()} | Todos os direitos reservados
         </span>
       </div>
-/*
-      <div className="flex items-center justify-center gap-2">
-        <a
-          href="https://github.com/crashzk/cs2-inventory-simulator"
-          className="flex items-center gap-1 transition-all hover:text-blue-500"
-          target="_blank"
-        >
-          <FontAwesomeIcon icon={faGithub} className="h-4" />
-          Source Code
-        </a>
-        {buildLastCommit !== undefined && (
-          <>
-            &middot;
-            <a
-              className="transition-all hover:text-blue-500"
-              href={`https://github.com/crashzk/cs2-inventory-simulator/commit/${buildLastCommit}`}
-              target="_blank"
-            >
-              {buildLastCommit.substring(0, 7)}
-            </a>
-          </>
-        )}
-      </div>
-*/
     </footer>
   );
 }
