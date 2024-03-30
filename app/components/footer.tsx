@@ -20,7 +20,7 @@ export function Footer() {
 		  &copy; 2017 - {new Date().getFullYear()} | Todos os direitos reservados
         </span>
       </div>
-/*---------- Comment para remover Source Code ---------------------------------------------------
+/*
       <div className="flex items-center justify-center gap-2">
         <a
           href="https://github.com/crashzk/cs2-inventory-simulator"
@@ -43,7 +43,7 @@ export function Footer() {
           </>
         )}
       </div>
- *--------------------------------------------------------------------------------------------*/
+*/
     </footer>
   );
 }
