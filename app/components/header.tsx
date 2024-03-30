@@ -19,7 +19,7 @@ import { useCraftFilterRules } from "~/hooks/use-craft-filter-rules";
 import { useIsDesktop } from "~/hooks/use-is-desktop";
 import { useIsOnTop } from "~/hooks/use-is-on-top";
 import { useTranslation } from "~/hooks/use-translation";
-import { ITEM_FILTERS } from "~/utils/filters";
+import { CRAFT_ITEM_FILTERS } from "~/utils/craft-filters";
 import { HeaderLink } from "./header-link";
 import { Logo } from "./logo";
 import { useRootContext } from "./root-context";
@@ -37,12 +37,12 @@ export function Header() {
   }
 
   const canCraft =
-    !inventory.isFull() && ITEM_FILTERS.filter(craftFilter).length > 0;
+    !inventory.isFull() && CRAFT_ITEM_FILTERS.filter(craftFilter).length > 0;
 
   return (
     <div
       className={clsx(
-        "sticky left-0 top-0 z-20 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] transition-all before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-black/60 before:to-transparent before:transition-all before:content-['']",
+        "sticky left-0 top-0 z-20 h-16 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] backdrop-blur transition-all before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-black/60 before:to-transparent before:transition-all before:content-['']",
         isOnTop ? "before:opacity-0" : "before:opacity-1"
       )}
     >

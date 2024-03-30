@@ -15,7 +15,7 @@ import {
   CS_STICKER_WEAR_FACTOR,
   CS_WEAR_FACTOR
 } from "@ianlucas/cslib";
-import { ItemFilter } from "./filters";
+import { CraftItemFilter } from "./craft-filters";
 
 export const baseUrl =
   "https://cdn.statically.io/gh/ianlucas/cslib/main/assets/images";
@@ -68,7 +68,7 @@ export function getCSItemName(item: CS_Item) {
   };
 }
 
-export function getBaseItems({ category, hasModel, type }: ItemFilter) {
+export function getBaseItems({ category, hasModel, type }: CraftItemFilter) {
   return CS_filterItems({
     category,
     type,
@@ -80,7 +80,7 @@ export function getBaseItems({ category, hasModel, type }: ItemFilter) {
   );
 }
 
-export function getPaidItems({ type }: ItemFilter, model: string) {
+export function getPaidItems({ type }: CraftItemFilter, model: string) {
   return CS_filterItems({
     model
   }).filter(({ base }) => type === "melee" || !base);
@@ -108,4 +108,24 @@ export function wearToString(wear: number) {
 
 export function stickerWearToString(wear: number) {
   return wear.toFixed(stickerWearStringMaxLen - 2);
+}
+
+export function isWeaponCase(item: CS_Item) {
+  // We need to check this way because `category` is affected by translation.
+  return item.category === CS_Economy.getById(9129).category;
+}
+
+export function isStickerCapsule(item: CS_Item) {
+  // We need to check this way because `category` is affected by translation.
+  return item.category === CS_Economy.getById(9134).category;
+}
+
+export function isGraffitiBox(item: CS_Item) {
+  // We need to check this way because `category` is affected by translation.
+  return item.category === CS_Economy.getById(11234).category;
+}
+
+export function isSouvenirCase(item: CS_Item) {
+  // We need to check this way because `category` is affected by translation.
+  return item.category === CS_Economy.getById(9147).category;
 }

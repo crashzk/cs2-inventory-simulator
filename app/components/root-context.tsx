@@ -14,15 +14,16 @@ import {
 } from "react";
 import { useTypedLoaderData } from "remix-typedjson";
 import { useInventory } from "~/hooks/use-inventory";
+import {
+  sortItemsByEquipped,
+  useInventoryFilters
+} from "~/hooks/use-inventory-filters";
 import { loader } from "~/root";
 import { AddFromCacheAction } from "~/routes/api.action.sync._index";
 import { translateItems } from "~/utils/economy";
 import {
   getFreeItemsToDisplay,
   parseInventory,
-  sortByEquipped,
-  sortByName,
-  sortByType,
   transform
 } from "~/utils/inventory";
 import type { SyncInventoryShape } from "~/utils/shapes.server";
@@ -37,6 +38,7 @@ import {
 const RootContext = createContext<
   {
     inventory: CS_Inventory;
+    inventoryFilters: ReturnType<typeof useInventoryFilters>;
     items: ReturnType<typeof transform>[];
     requireAuth: boolean;
     setInventory: (value: CS_Inventory) => void;
@@ -58,15 +60,19 @@ export function RootProvider({
 > & {
   children: ReactNode;
 }) {
+  const inventorySpec = {
+    items: user?.inventory
+      ? parseInventory(user?.inventory)
+      : retrieveInventoryItems(),
+    maxItems: rules.inventoryMaxItems,
+    storageUnitMaxItems: rules.inventoryStorageUnitMaxItems
+  };
+
   const [inventory, setInventory] = useInventory(
-    new CS_Inventory({
-      items: user?.inventory
-        ? parseInventory(user?.inventory)
-        : retrieveInventoryItems(),
-      maxItems: rules.inventoryMaxItems,
-      storageUnitMaxItems: rules.inventoryStorageUnitMaxItems
-    })
+    new CS_Inventory(inventorySpec)
   );
+
+  const inventoryFilters = useInventoryFilters();
 
   useEffect(() => {
     storeInventoryItems(inventory.export());
@@ -98,34 +104,38 @@ export function RootProvider({
     }
   }, [user]);
 
-  translateItems(preferences.language, preferences.itemTranslation);
+  useEffect(() => {
+    translateItems(preferences.language, preferences.itemTranslation);
+    setInventory(new CS_Inventory(inventorySpec));
+  }, [preferences.language]);
 
   const items = useMemo(
-    () => [
-      // Inventory Items
-      ...inventory
-        .getAll()
-        .map(transform)
-        .sort(sortByName)
-        .sort(sortByType)
-        .sort(sortByEquipped),
-      // Default Game Items
-      ...getFreeItemsToDisplay(preferences.hideFreeItems)
-        .sort(sortByName)
-        .sort(sortByType)
-        .sort(sortByEquipped)
-    ],
-    [inventory, preferences.language, preferences.hideFreeItems]
+    () =>
+      (preferences.hideFilters
+        ? sortItemsByEquipped
+        : inventoryFilters.sortItems)(
+        // Inventory Items
+        inventory.getAll().map(transform),
+        // Default Game Items
+        getFreeItemsToDisplay(preferences.hideFreeItems)
+      ),
+    [
+      inventory,
+      preferences.hideFreeItems,
+      preferences.hideFilters,
+      inventoryFilters.sortItems
+    ]
   );
 
   return (
     <RootContext.Provider
       value={{
-        rules: rules,
         inventory,
+        inventoryFilters,
         items,
         preferences,
         requireAuth: retrieveUserId() !== undefined,
+        rules,
         setInventory,
         user
       }}

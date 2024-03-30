@@ -22,6 +22,7 @@ import {
 import { playSound } from "~/utils/sound";
 import { ApplyItemSticker } from "./apply-item-sticker";
 import { InfoIcon } from "./info-icon";
+import { InventoryFilter } from "./inventory-filter";
 import { InventoryGridPlaceholder } from "./inventory-grid-placeholder";
 import { InventorySelectedItem } from "./inventory-selected-item";
 import { useItemSelectorContext } from "./item-selector-context";
@@ -34,7 +35,13 @@ import { UnlockCase } from "./unlock-case";
 
 export function Inventory() {
   const sync = useSync();
-  const { inventory, items, setInventory } = useRootContext();
+  const {
+    inventory,
+    inventoryFilters: { filterItems },
+    items,
+    preferences: { hideFilters },
+    setInventory
+  } = useRootContext();
   const { itemSelector, setItemSelector } = useItemSelectorContext();
   const translate = useTranslation();
   const navigate = useNavigate();
@@ -156,10 +163,15 @@ export function Inventory() {
   }
 
   const isSelectingAnItem = itemSelector !== undefined;
-  const displayedItems = isSelectingAnItem ? itemSelector.items : items;
+  const displayedItems = isSelectingAnItem
+    ? itemSelector.items
+    : hideFilters
+      ? items
+      : items.filter(filterItems);
 
   return (
     <>
+      {!hideFilters && !isSelectingAnItem && <InventoryFilter />}
       {isSelectingAnItem && (
         <InventorySelectedItem
           {...itemSelector}
