@@ -12,7 +12,6 @@ import { useScrapeItemSticker } from "~/hooks/use-scrape-item-sticker";
 import { useStorageUnit } from "~/hooks/use-storage-unit";
 import { useSwapItemsStatTrak } from "~/hooks/use-swap-items-stattrak";
 import { useSync } from "~/hooks/use-sync";
-import { useTranslation } from "~/hooks/use-translation";
 import { useUnlockCase } from "~/hooks/use-unlock-case";
 import {
   EquipAction,
@@ -22,7 +21,6 @@ import {
 import { playSound } from "~/utils/sound";
 import { ApplyItemSticker } from "./apply-item-sticker";
 import { InfoIcon } from "./info-icon";
-import { InventoryFilter } from "./inventory-filter";
 import { InventoryGridPlaceholder } from "./inventory-grid-placeholder";
 import { InventorySelectedItem } from "./inventory-selected-item";
 import { useItemSelectorContext } from "./item-selector-context";
@@ -40,10 +38,10 @@ export function Inventory() {
     inventoryFilters: { filterItems },
     items,
     preferences: { hideFilters },
-    setInventory
+    setInventory,
+    translations: { translate }
   } = useRootContext();
   const { itemSelector, setItemSelector } = useItemSelectorContext();
-  const translate = useTranslation();
   const navigate = useNavigate();
 
   const ownApplicableStickers =
@@ -171,7 +169,6 @@ export function Inventory() {
 
   return (
     <>
-      {!hideFilters && !isSelectingAnItem && <InventoryFilter />}
       {isSelectingAnItem && (
         <InventorySelectedItem
           {...itemSelector}

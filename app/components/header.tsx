@@ -18,18 +18,24 @@ import clsx from "clsx";
 import { useCraftFilterRules } from "~/hooks/use-craft-filter-rules";
 import { useIsDesktop } from "~/hooks/use-is-desktop";
 import { useIsOnTop } from "~/hooks/use-is-on-top";
-import { useTranslation } from "~/hooks/use-translation";
 import { CRAFT_ITEM_FILTERS } from "~/utils/craft-filters";
 import { HeaderLink } from "./header-link";
+import { InventoryFilter } from "./inventory-filter";
+import { useItemSelectorContext } from "./item-selector-context";
 import { Logo } from "./logo";
 import { useRootContext } from "./root-context";
 
 export function Header() {
-  const { user, inventory } = useRootContext();
+  const {
+    user,
+    inventory,
+    preferences: { hideFilters },
+    translations: { translate }
+  } = useRootContext();
+  const { itemSelector } = useItemSelectorContext();
   const craftFilter = useCraftFilterRules();
   const [isMenuOpen, toggleIsMenuOpen] = useToggle(false);
   const isDesktop = useIsDesktop();
-  const translate = useTranslation();
   const isOnTop = useIsOnTop();
 
   function closeMenu() {
@@ -39,10 +45,12 @@ export function Header() {
   const canCraft =
     !inventory.isFull() && CRAFT_ITEM_FILTERS.filter(craftFilter).length > 0;
 
+  const isSelectingAnItem = itemSelector !== undefined;
+
   return (
     <div
       className={clsx(
-        "sticky left-0 top-0 z-20 h-16 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] backdrop-blur transition-all before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-black/60 before:to-transparent before:transition-all before:content-['']",
+        "sticky left-0 top-0 z-20 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] backdrop-blur transition-all before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-neutral-800/60 before:to-transparent before:transition-all before:content-['']",
         isOnTop ? "before:opacity-0" : "before:opacity-1"
       )}
     >
@@ -122,6 +130,7 @@ export function Header() {
           </div>
         )}
       </div>
+      {!hideFilters && !isSelectingAnItem && <InventoryFilter />}
     </div>
   );
 }

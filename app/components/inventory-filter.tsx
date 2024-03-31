@@ -9,7 +9,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import { useTranslation } from "~/hooks/use-translation";
 import {
   INVENTORY_PRIMARY_FILTERS,
   INVENTORY_SECONDARY_FILTERS,
@@ -20,7 +19,6 @@ import { useRootContext } from "./root-context";
 import { Select } from "./select";
 
 export function InventoryFilter() {
-  const translate = useTranslation();
   const {
     inventoryFilters: {
       handleClickPrimary,
@@ -31,7 +29,8 @@ export function InventoryFilter() {
       setSearch,
       setSorter,
       sorter
-    }
+    },
+    translations: { translate }
   } = useRootContext();
 
   const secondaryFilters =
@@ -39,8 +38,8 @@ export function InventoryFilter() {
   const hasSecondaryFilters = secondaryFilters !== undefined;
 
   return (
-    <div className="sticky left-0 top-16 z-20 hidden backdrop-blur lg:block">
-      <div className="mx-auto flex w-[1024px] items-center justify-center gap-2 rounded-t bg-black/30 py-2">
+    <div className="hidden lg:block">
+      <div className="mx-auto flex w-[1024px] items-center justify-center gap-2 rounded-t bg-neutral-900/30 py-2">
         {INVENTORY_PRIMARY_FILTERS.map((value, index) => (
           <InventoryFilterButton
             active={index === primary}
@@ -76,7 +75,8 @@ export function InventoryFilter() {
             <input
               className={clsx(
                 "flex-1 border-b-2 border-white bg-transparent placeholder-neutral-400 outline-none transition-all",
-                search.length === 0 && "opacity-0 group-hover:opacity-100"
+                search.length === 0 &&
+                  "opacity-0 focus:opacity-100 group-hover:opacity-100"
               )}
               onChange={setSearch}
               placeholder={translate("InventoryFilterSearch")}
