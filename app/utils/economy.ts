@@ -5,53 +5,61 @@
 
 import {
   CS_Economy,
-  CS_filterItems,
   CS_Item,
-  CS_ITEMS,
   CS_ItemTranslations,
   CS_MAX_SEED,
-  CS_resolveCaseSpecialsImage,
-  CS_resolveItemImage,
   CS_STICKER_WEAR_FACTOR,
   CS_WEAR_FACTOR
 } from "@ianlucas/cslib";
 import { CraftItemFilter } from "./craft-filters";
 
-export const baseUrl =
+export const assetBaseUrl =
   "https://cdn.statically.io/gh/ianlucas/cslib/main/assets/images";
 
 export const modelFromType = {
   agent: "Agent",
   case: "",
-  glove: "Glove",
-  graffiti: "Graffiti",
+  glove: "",
+  graffiti: "",
   key: "",
-  melee: "Knife",
-  musickit: "Music Kit",
-  patch: "Patch",
+  melee: "",
+  musickit: "",
+  patch: "",
   pin: "",
-  sticker: "Sticker",
+  sticker: "",
   tool: "",
   weapon: "Weapon"
 } as const;
 
+export const COUNTABLE_ITEM_TYPES = ["case", "key", "sticker", "tool"];
+export const FREE_MODEL_IN_NAME_TYPES = ["musickit"];
+export const MODEL_IN_NAME_ITEM_TYPES = [
+  "glove",
+  "graffiti",
+  "melee",
+  "musickit",
+  "patch",
+  "sticker",
+  "weapon"
+];
+
 export function translateItems(itemTranslation: CS_ItemTranslations[number]) {
-  CS_Economy.use(CS_ITEMS);
   CS_Economy.applyTranslation(itemTranslation);
 }
 
-export function getCSItemName(item: CS_Item) {
-  if (item.free) {
+export function getItemName(item: CS_Item) {
+  if (item.free && !FREE_MODEL_IN_NAME_TYPES.includes(item.type)) {
     return {
-      model: ["musickit"].includes(item.type) ? modelFromType[item.type] : "",
+      model: "",
       name: item.name
     };
   }
-  if (["weapon", "melee", "glove"].includes(item.type)) {
-    const [weaponName, ...paintName] = item.name.split("|");
+  if (MODEL_IN_NAME_ITEM_TYPES.includes(item.type)) {
+    const [model, ...paintName] = item.name.split("|");
     return {
-      model: (item.type === "melee" ? "★ " : "") + weaponName.trim(),
-      name: paintName.join("|")
+      model: model.trim(),
+      name: paintName.join("|"),
+      quality: item.type === "melee" ? "★ " : undefined
     };
   }
   return {
@@ -61,33 +69,36 @@ export function getCSItemName(item: CS_Item) {
 }
 
 export function getBaseItems({ category, hasModel, type }: CraftItemFilter) {
-  return CS_filterItems({
+  return CS_Economy.filterItems({
     category,
     type,
     base: hasModel ? true : undefined
   }).filter(
     ({ free }) =>
-      (hasModel && type === undefined ? free : !free) ||
-      (!hasModel && (type !== "musickit" || !free))
+      (hasModel && type === undefined ? free : !free) || (!hasModel && !free)
   );
 }
 
 export function getPaidItems({ type }: CraftItemFilter, model: string) {
-  return CS_filterItems({
+  return CS_Economy.filterItems({
     model
   }).filter(({ base }) => type === "melee" || !base);
 }
 
-export function showQuantity(item: CS_Item) {
-  return ["case", "key", "sticker", "tool"].includes(item.type);
+export function isItemCountable(item: CS_Item) {
+  return COUNTABLE_ITEM_TYPES.includes(item.type);
 }
 
 export function resolveItemImage(item: number | CS_Item, wear?: number) {
-  return CS_resolveItemImage(baseUrl, item, wear);
+  return CS_Economy.resolveItemImage(assetBaseUrl, item, wear);
 }
 
-export function resolveCaseSpecialItemImage(item: number | CS_Item) {
-  return CS_resolveCaseSpecialsImage(baseUrl, item);
+export function resolveCaseSpecialsImage(item: number | CS_Item) {
+  return CS_Economy.resolveCaseSpecialsImage(assetBaseUrl, item);
+}
+
+export function resolveCollectionImage(item: number | CS_Item) {
+  return CS_Economy.resolveCollectionImage(assetBaseUrl, item);
 }
 
 export const seedStringMaxLen = String(CS_MAX_SEED).length;

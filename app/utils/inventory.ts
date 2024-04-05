@@ -4,17 +4,28 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  CS_filterItems,
+  CS_Economy,
   CS_InventoryItem,
   CS_NONE,
   CS_RARITY_COLORS,
   CS_RARITY_ORDER
 } from "@ianlucas/cslib";
-import { getCSItemName } from "./economy";
+import { getItemName } from "./economy";
 import { serverInventoryShape } from "./shapes";
 
-/** @TODO It's a union of wearable, nametaggable, seedable, and stickerable arrays. */
-export const EDITABLE_INVENTORY_TYPE = ["weapon", "melee", "glove", "musickit"];
+export const UNLOCKABLE_ITEM_TYPE = ["case", "key"];
+export const EDITABLE_ITEM_TYPE = ["weapon", "melee", "glove", "musickit"];
+export const INSPECTABLE_ITEM_TYPE = [
+  "case",
+  "glove",
+  "graffiti",
+  "melee",
+  "musickit",
+  "patch",
+  "pin",
+  "sticker",
+  "weapon"
+];
 
 export function parseInventory(inventory?: string | null) {
   if (!inventory) {
@@ -29,7 +40,7 @@ export function parseInventory(inventory?: string | null) {
 
 export function transform(item: CS_InventoryItem) {
   return {
-    ...getCSItemName(item.data),
+    ...getItemName(item.data),
     equipped: [
       item.equipped && "text-white",
       item.equippedCT && "text-sky-300",
@@ -117,10 +128,10 @@ export function getFreeItemsToDisplay(hideFreeItems = false) {
   if (hideFreeItems) {
     return [];
   }
-  return CS_filterItems({
+  return CS_Economy.filterItems({
     free: true
   }).map((item, index) => ({
-    ...getCSItemName(item),
+    ...getItemName(item),
     equipped: [],
     item: {
       data: item,

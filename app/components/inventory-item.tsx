@@ -5,23 +5,20 @@
 
 import { FloatingFocusManager } from "@floating-ui/react";
 import {
+  CS_Economy,
   CS_INVENTORY_EQUIPPABLE_ITEMS,
   CS_NONE,
   CS_TEAM_CT,
   CS_TEAM_T,
-  CS_Team,
-  CS_hasSeed,
-  CS_hasStickers,
-  CS_hasWear,
-  CS_isNametagTool,
-  CS_isStatTrakSwapTool,
-  CS_isStorageUnitTool
+  CS_Team
 } from "@ianlucas/cslib";
 import clsx from "clsx";
 import { useInventoryItemFloating } from "~/hooks/use-inventory-item-floating";
 import {
-  EDITABLE_INVENTORY_TYPE,
-  TransformedInventoryItem
+  EDITABLE_ITEM_TYPE,
+  INSPECTABLE_ITEM_TYPE,
+  TransformedInventoryItem,
+  UNLOCKABLE_ITEM_TYPE
 } from "~/utils/inventory";
 import { format } from "~/utils/number";
 import { CSItem } from "./cs-item";
@@ -47,6 +44,7 @@ export function InventoryItem({
   onDepositToStorageUnit,
   onEdit,
   onEquip,
+  onInspectItem,
   onInspectStorageUnit,
   onRemove,
   onRename,
@@ -57,6 +55,7 @@ export function InventoryItem({
   onUnequip,
   onUnlockContainer,
   ownApplicableStickers,
+  quality,
   uid
 }: TransformedInventoryItem & {
   disableContextMenu?: boolean;
@@ -66,6 +65,7 @@ export function InventoryItem({
   onDepositToStorageUnit?: (uid: number) => void;
   onEdit?: (uid: number) => void;
   onEquip?: (uid: number, team?: CS_Team) => void;
+  onInspectItem?: (uid: number) => void;
   onInspectStorageUnit?: (uid: number) => void;
   onRemove?: (uid: number) => void;
   onRename?: (uid: number) => void;
@@ -115,25 +115,26 @@ export function InventoryItem({
   const canUnequipCT = item.equippedCT === true;
 
   const hasStatTrak = item.stattrak !== undefined;
-  const hasWear = !data.free && CS_hasWear(data);
-  const hasSeed = !data.free && CS_hasSeed(data);
+  const hasWear = !data.free && CS_Economy.hasWear(data);
+  const hasSeed = !data.free && CS_Economy.hasSeed(data);
   const hasAttributes = hasWear || hasSeed;
-  const canSwapStatTrak = CS_isStatTrakSwapTool(data);
-  const canRename = CS_isNametagTool(data);
+  const canSwapStatTrak = CS_Economy.isStatTrakSwapTool(data);
+  const canRename = CS_Economy.isNametagTool(data);
   const canApplySticker =
     ownApplicableStickers &&
-    ((CS_hasStickers(data) &&
+    ((CS_Economy.hasStickers(data) &&
       (item.stickers ?? []).filter((id) => id !== CS_NONE).length < 4) ||
       data.type === "sticker");
   const canScrapeSticker =
-    CS_hasStickers(data) &&
+    CS_Economy.hasStickers(data) &&
     (item.stickers ?? []).filter((id) => id !== CS_NONE).length > 0;
-  const canUnlockContainer = ["case", "key"].includes(data.type);
+  const canUnlockContainer = UNLOCKABLE_ITEM_TYPE.includes(data.type);
   const hasContents = data.contents !== undefined;
   const hasTeams = data.teams !== undefined;
   const hasNametag = item.nametag !== undefined;
-  const isStorageUnit = CS_isStorageUnitTool(data);
-  const isEditable = EDITABLE_INVENTORY_TYPE.includes(data.type);
+  const isStorageUnit = CS_Economy.isStorageUnitTool(data);
+  const isEditable = EDITABLE_ITEM_TYPE.includes(data.type);
+  const canInspect = INSPECTABLE_ITEM_TYPE.includes(data.type);
 
   function close(callBeforeClosing: () => void) {
     return function close() {
@@ -175,6 +176,13 @@ export function InventoryItem({
           >
             <InventoryItemContextMenu
               menu={[
+                [
+                  {
+                    condition: canInspect,
+                    label: translate("InventoryItemInspect"),
+                    onClick: close(() => onInspectItem?.(uid))
+                  }
+                ],
                 [
                   {
                     condition: canEquip,
@@ -322,7 +330,12 @@ export function InventoryItem({
             style={hoverStyles}
             {...getHoverFloatingProps()}
           >
-            <InventoryItemName inventoryItem={item} model={model} name={name} />
+            <InventoryItemName
+              inventoryItem={item}
+              model={model}
+              name={name}
+              quality={quality}
+            />
             {hasTeams && <InventoryItemTeams item={item.data} />}
             {hasStatTrak && <InventoryItemStatTrak inventoryItem={item} />}
             {hasContents && <InventoryItemContents item={item.data} />}

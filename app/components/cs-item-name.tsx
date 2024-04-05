@@ -6,7 +6,15 @@
 import { CS_Item } from "@ianlucas/cslib";
 import clsx from "clsx";
 
-const HAS_KIND_FIRST = ["weapon", "melee", "glove"];
+const HAS_KIND_FIRST = [
+  "weapon",
+  "melee",
+  "glove",
+  "musickit",
+  "sticker",
+  "graffiti",
+  "patch"
+];
 
 export function CSItemName({
   item: { name, type, rarity }
@@ -14,6 +22,7 @@ export function CSItemName({
   item: CS_Item;
 }) {
   const parts = name.split("|");
+  console.log(parts);
 
   return (
     <>
@@ -21,13 +30,15 @@ export function CSItemName({
         <span key={index}>
           <span
             className={clsx(
-              index === 0 && HAS_KIND_FIRST.includes(type)
+              index === 0 && HAS_KIND_FIRST.includes(type) && parts.length > 1
                 ? "text-neutral-400"
                 : "font-bold"
             )}
             style={{
               color:
-                index !== 0 || !HAS_KIND_FIRST.includes(type)
+                index !== 0 ||
+                !HAS_KIND_FIRST.includes(type) ||
+                parts.length === 1
                   ? rarity
                   : undefined
             }}
