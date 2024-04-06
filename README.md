@@ -1,4 +1,4 @@
-# [cs2.zkservidores.com](https://cs2.zkservidores.com/)
+# [cs2.zkservidores.com](https://cs2.zkservidores.com)
 
 **ZK Servidores™ | Skin Changer** for players to choose their skins within our CS2 servers.
 
