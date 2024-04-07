@@ -24,7 +24,7 @@ import { ApiActionPreferencesUrl } from "./api.action.preferences._index";
 import { RemoveAllItemsAction } from "./api.action.sync._index";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "ZK Servidores™ | Skinchanger - Settings" }];
+  return [{ title: "Settings - ZK Servidores™ | Skinchanger" }];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
