@@ -7,7 +7,7 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { middleware } from "~/http.server";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "ZK Servidores™ | Skin Changer" }];
+  return [{ title: "ZK Servidores™ | Skinchanger" }];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
