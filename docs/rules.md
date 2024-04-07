@@ -39,6 +39,18 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 - **Type:** `boolean`
 - **Default:** `false`
 
+### `InventoryItemAllowApplySticker`
+
+- Indicates whether the user can apply sticker to an inventory item.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `InventoryItemAllowScrapeSticker`
+
+- Indicates whether the user can scrape sticker in an inventory item.
+- **Type:** `boolean`
+- **Default:** `true`
+
 > [!WARNING]  
 > You can find all possible items and their attributes [here](https://raw.githubusercontent.com/ianlucas/cslib/main/assets/data/items.json).
 
@@ -66,6 +78,36 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 - **Type:** `number-array`
 - **Usage example:** `307` (Users won't be able to craft AWP | Dragon Lore.)
 
+### `CraftAllowNametag`
+
+- Indicates whether the user can define Name tag when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `CraftAllowSeed`
+
+- Indicates whether the user can define Seed when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `CraftAllowStatTrak`
+
+- Indicates whether the user can define StatTrak when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `CraftAllowStickers`
+
+- Indicates whether the user can define Stickers when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `CraftAllowWear`
+
+- Indicates whether the user can define Wear when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
 ### `EditHideCategory`
 
 - Determines whether to hide a category from being editable.
@@ -89,6 +131,36 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 - Determines whether to hide an item from being editable.
 - **Type:** `number-array`
 - **Usage example:** `307` (Users won't be able to edit AWP | Dragon Lore.)
+
+### `EditAllowNametag`
+
+- Indicates whether the user can define Name tag when editing.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `EditAllowSeed`
+
+- Indicates whether the user can define Seed when editing.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `EditAllowStatTrak`
+
+- Indicates whether the user can define StatTrak when editing.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `EditAllowStickers`
+
+- Indicates whether the user can define Stickers when editing.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `EditAllowWear`
+
+- Indicates whether the user can define Wear when editing.
+- **Type:** `boolean`
+- **Default:** `true`
 
 ## Rule overwriting
 

@@ -8,7 +8,21 @@ import { prisma } from "~/db.server";
 import { STEAM_API_KEY, STEAM_CALLBACK_URL } from "~/env.server";
 import { assert, fail } from "~/utils/misc";
 
-const booleanRulesNames = ["InventoryItemAllowEdit"] as const;
+const booleanRulesNames = [
+  "CraftAllowNametag",
+  "CraftAllowSeed",
+  "CraftAllowStatTrak",
+  "CraftAllowStickers",
+  "CraftAllowWear",
+  "EditAllowNametag",
+  "EditAllowSeed",
+  "EditAllowStatTrak",
+  "EditAllowStickers",
+  "EditAllowWear",
+  "InventoryItemAllowApplySticker",
+  "InventoryItemAllowEdit",
+  "InventoryItemAllowScrapeSticker"
+] as const;
 const numberRulesNames = [
   "InventoryMaxItems",
   "InventoryStorageUnitMaxItems"
@@ -332,5 +346,65 @@ export async function setupRules() {
     name: "EditHideId",
     type: "number-array",
     input: []
+  });
+  await addRule({
+    name: "InventoryItemAllowApplySticker",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "InventoryItemAllowScrapeSticker",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "CraftAllowNametag",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "CraftAllowSeed",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "CraftAllowWear",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "CraftAllowStatTrak",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "CraftAllowStickers",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "EditAllowNametag",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "EditAllowSeed",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "EditAllowWear",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "EditAllowStatTrak",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "EditAllowStickers",
+    type: "boolean",
+    input: true
   });
 }
