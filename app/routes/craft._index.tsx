@@ -29,7 +29,7 @@ import { playSound } from "~/utils/sound";
 import { AddAction, EditAction } from "./api.action.sync._index";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Craft - CS2 Inventory Simulator" }];
+  return [{ title: "Craft - ZK Servidores™ | Skinchanger" }];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
