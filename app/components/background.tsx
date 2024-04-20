@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { useMemo } from "react";
-import { useRootContext } from "./root-context";
+import { backgrounds } from "~/data/backgrounds";
+import { random } from "~/utils/misc";
+import { usePreferences } from "./app-context";
 
 export function Background() {
-  const {
-    preferences: { background: serverBackground, currentBackground }
-  } = useRootContext();
+  const { background: current } = usePreferences();
 
   const background = useMemo(() => {
-    return serverBackground;
-  }, [currentBackground]);
+    return current ?? random(backgrounds).value;
+  }, [current]);
 
   return (
     <video

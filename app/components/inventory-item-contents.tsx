@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy, CS_Item } from "@ianlucas/cslib";
-import { useRootContext } from "./root-context";
+import { CS_Economy, CS_Item } from "@ianlucas/cs2-lib";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useTranslate } from "./app-context";
 
 export function InventoryItemContents({ item }: { item: CS_Item }) {
-  const {
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
+  const nameItemString = useNameItemString();
 
   return (
     <div className="mt-4">
@@ -18,7 +18,7 @@ export function InventoryItemContents({ item }: { item: CS_Item }) {
       </div>
       {CS_Economy.listCaseContents(item, true).map((item) => (
         <div key={item.id} style={{ color: item.rarity }}>
-          {item.name}
+          {nameItemString(item, "case-contents-name")}
         </div>
       ))}
       {item.specials !== undefined && (

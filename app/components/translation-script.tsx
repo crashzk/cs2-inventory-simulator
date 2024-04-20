@@ -4,14 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { useEffect, useState } from "react";
-import { useRootContext } from "./root-context";
+import { usePreferences, useTranslationChecksum } from "./app-context";
 
 export function TranslationScript() {
-  const {
-    preferences: { language },
-    translations: { checksum }
-  } = useRootContext();
-
+  const checksum = useTranslationChecksum();
+  const { language } = usePreferences();
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -23,7 +20,7 @@ export function TranslationScript() {
     return () => {
       document.body.removeChild(script);
     };
-  }, [language]);
+  }, [checksum, language]);
 
   if (isInitialized) {
     return null;

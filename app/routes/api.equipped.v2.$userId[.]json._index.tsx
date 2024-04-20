@@ -10,7 +10,7 @@ import { getRules } from "~/models/rule.server";
 import { handleUserCachedResponse } from "~/models/user-cache.server";
 import { generate } from "~/utils/inventory-equipped-v2";
 
-export const ApiEquippedUserIdJsonUrl = "/api/equipped/v2/$userId.json";
+export const ApiEquippedV2UserIdJsonUrl = "/api/equipped/v2/$userId.json";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await middleware(request);
@@ -33,7 +33,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     },
     mimeType: "application/json",
     throwBody: {},
-    url: ApiEquippedUserIdJsonUrl,
+    url: ApiEquippedV2UserIdJsonUrl,
     userId
   });
 }

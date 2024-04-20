@@ -12,8 +12,8 @@ import {
   useState
 } from "react";
 import { ClientOnly } from "remix-utils/client-only";
-import { useWatch } from "~/hooks/use-watch";
-import { TransformedInventoryItems } from "~/utils/inventory";
+import { useWatch } from "~/components/hooks/use-watch";
+import { TransformedInventoryItems } from "~/utils/inventory-transform";
 
 export interface ItemSelectorContextProps {
   items: TransformedInventoryItems;
@@ -39,6 +39,11 @@ const ItemSelectorContext = createContext<{
 
 export function useItemSelectorContext() {
   return useContext(ItemSelectorContext);
+}
+
+export function useItemSelector() {
+  const { itemSelector, setItemSelector } = useItemSelectorContext();
+  return [itemSelector, setItemSelector] as const;
 }
 
 export function useItemSelectorScrollTopHandler<T>(dependency: T) {

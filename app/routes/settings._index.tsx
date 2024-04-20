@@ -8,18 +8,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Link, useNavigate, useSubmit } from "@remix-run/react";
 import { useState } from "react";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import {
+  useInventory,
+  usePreferences,
+  useTranslate
+} from "~/components/app-context";
 import { EditorToggle } from "~/components/editor-toggle";
+import { useCheckbox } from "~/components/hooks/use-checkbox";
+import { useSync } from "~/components/hooks/use-sync";
 import { LanguageSelect } from "~/components/language-select";
 import { Modal } from "~/components/modal";
 import { ModalButton } from "~/components/modal-button";
-import { useRootContext } from "~/components/root-context";
 import { Select } from "~/components/select";
-import { useCheckbox } from "~/hooks/use-checkbox";
-import { useSync } from "~/hooks/use-sync";
+import { backgrounds } from "~/data/backgrounds";
+import { languages } from "~/data/languages";
 import { middleware } from "~/http.server";
-import { backgrounds } from "~/preferences/background.server";
-import { languages } from "~/preferences/language.server";
 import { ApiActionPreferencesUrl } from "./api.action.preferences._index";
 import { RemoveAllItemsAction } from "./api.action.sync._index";
 
@@ -29,29 +32,19 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await middleware(request);
-  return typedjson({
-    backgrounds,
-    languages: languages.map(({ name, countries }) => ({
-      name,
-      country: countries[0]
-    }))
-  });
+  return null;
 }
 
 export default function Settings() {
-  const { backgrounds, languages } = useTypedLoaderData<typeof loader>();
   const {
-    inventory,
-    setInventory,
-    preferences: {
-      currentBackground: selectedBackground,
-      hideFilters: selectedHideFilters,
-      hideFreeItems: selectedHideFreeItems,
-      language: selectedLanguage,
-      statsForNerds: selectedStatsForNerds
-    },
-    translations: { translate }
-  } = useRootContext();
+    background: selectedBackground,
+    hideFilters: selectedHideFilters,
+    hideFreeItems: selectedHideFreeItems,
+    language: selectedLanguage,
+    statsForNerds: selectedStatsForNerds
+  } = usePreferences();
+  const [inventory, setInventory] = useInventory();
+  const translate = useTranslate();
   const sync = useSync();
 
   const [background, setBackground] = useState(selectedBackground ?? "");
@@ -104,7 +97,10 @@ export default function Settings() {
             {translate("SettingsLanguage")}
           </label>
           <LanguageSelect
-            languages={languages}
+            languages={languages.map(({ name, countries }) => ({
+              name,
+              country: countries[0]
+            }))}
             value={language}
             onChange={setLanguage}
           />

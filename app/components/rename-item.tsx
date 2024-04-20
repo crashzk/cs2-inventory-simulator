@@ -3,21 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy } from "@ianlucas/cslib";
-import { useMemo } from "react";
+import { CS_Economy } from "@ianlucas/cs2-lib";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
-import { useInput } from "~/hooks/use-input";
-import { useInventoryItem } from "~/hooks/use-inventory-item";
-import { useSync } from "~/hooks/use-sync";
+import { useFreeze } from "~/components/hooks/use-freeze";
+import { useInput } from "~/components/hooks/use-input";
+import { useInventoryItem } from "~/components/hooks/use-inventory-item";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useSync } from "~/components/hooks/use-sync";
 import {
   AddWithNametagAction,
   RenameItemAction
 } from "~/routes/api.action.sync._index";
-import { CSItemImage } from "./cs-item-image";
+import { useInventory, useTranslate } from "./app-context";
 import { EditorInput } from "./editor-input";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UseItemFooter } from "./use-item-footer";
 import { UseItemHeader } from "./use-item-header";
 
@@ -30,23 +31,20 @@ export function RenameItem({
   targetUid: number;
   toolUid: number;
 }) {
-  const {
-    inventory,
-    setInventory,
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
   const sync = useSync();
+  const nameItemString = useNameItemString();
+  const [inventory, setInventory] = useInventory();
 
-  const freeItems = useMemo(
-    () =>
-      CS_Economy.filterItems({
-        free: true
-      }).map((item) => item.id),
-    []
+  const freeItems = useFreeze(() =>
+    CS_Economy.filterItems({
+      free: true
+    }).map((item) => item.id)
   );
   const [nametag, setNametag] = useInput("");
 
-  const { data: targetItem } = useInventoryItem(targetUid);
+  const inventoryItem = useInventoryItem(targetUid);
+  const { data: targetItem } = inventoryItem;
   const isRenamingFreeItem = freeItems.includes(targetItem.id);
 
   function handleRename() {
@@ -79,11 +77,11 @@ export function RenameItem({
             <div>
               <UseItemHeader
                 actionDesc={translate("RenameEnterName")}
-                actionItem={targetItem.name}
+                actionItem={nameItemString(inventoryItem)}
                 title={translate("RenameUse")}
                 warning={translate("RenameWarn")}
               />
-              <CSItemImage
+              <ItemImage
                 className="m-auto my-8 aspect-[1.33333] max-w-[512px]"
                 item={targetItem}
               />

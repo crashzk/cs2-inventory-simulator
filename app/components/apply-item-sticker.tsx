@@ -5,20 +5,21 @@
 
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CS_Economy, CS_INVENTORY_STICKERS, CS_NONE } from "@ianlucas/cslib";
+import { CS_Economy, CS_INVENTORY_STICKERS, CS_NONE } from "@ianlucas/cs2-lib";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
-import { useInventoryItem } from "~/hooks/use-inventory-item";
-import { useSync } from "~/hooks/use-sync";
+import { useInventoryItem } from "~/components/hooks/use-inventory-item";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useSync } from "~/components/hooks/use-sync";
 import {
   AddWithStickerAction,
   ApplyItemStickerAction
 } from "~/routes/api.action.sync._index";
 import { playSound } from "~/utils/sound";
-import { CSItemImage } from "./cs-item-image";
+import { useInventory, useTranslate } from "./app-context";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UseItemFooter } from "./use-item-footer";
 import { UseItemHeader } from "./use-item-header";
 
@@ -31,18 +32,15 @@ export function ApplyItemSticker({
   targetUid: number;
   stickerUid: number;
 }) {
-  const {
-    inventory,
-    setInventory,
-    translations: { translate }
-  } = useRootContext();
+  const [inventory, setInventory] = useInventory();
+  const translate = useTranslate();
   const sync = useSync();
+  const nameItemString = useNameItemString();
 
   const [stickerIndex, setStickerIndex] = useState<number>();
   const { data: stickerItem } = useInventoryItem(stickerUid);
-  const { data: targetItem, stickers: initialStickers } =
-    useInventoryItem(targetUid);
-
+  const targetInventoryItem = useInventoryItem(targetUid);
+  const { data: targetItem, stickers: initialStickers } = targetInventoryItem;
   const stickers = initialStickers ?? [...CS_INVENTORY_STICKERS];
 
   function handleApplySticker() {
@@ -83,18 +81,18 @@ export function ApplyItemSticker({
             <div>
               <UseItemHeader
                 actionDesc={translate("ApplyStickerUseOn")}
-                actionItem={targetItem.name}
+                actionItem={nameItemString(targetInventoryItem)}
                 title={translate("ApplyStickerUse")}
                 warning={translate("ApplyStickerWarn")}
               />
-              <CSItemImage
+              <ItemImage
                 className="m-auto aspect-[1.33333] max-w-[512px]"
                 item={targetItem}
               />
               <div className="flex">
                 {stickers.map((id, index) =>
                   id !== CS_NONE || index === stickerIndex ? (
-                    <CSItemImage
+                    <ItemImage
                       key={index}
                       className="h-[126px] w-[168px]"
                       item={

@@ -11,16 +11,13 @@ import clsx from "clsx";
 import { useState } from "react";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
-import {
-  CSItemEditor,
-  CSItemEditorAttributes
-} from "~/components/cs-item-editor";
-import { CSItemPicker } from "~/components/cs-item-picker";
+import { useInventory, useTranslate } from "~/components/app-context";
+import { useIsDesktop } from "~/components/hooks/use-is-desktop";
+import { useLockScroll } from "~/components/hooks/use-lock-scroll";
+import { useSync } from "~/components/hooks/use-sync";
+import { ItemEditor, ItemEditorAttributes } from "~/components/item-editor";
+import { ItemPicker } from "~/components/item-picker";
 import { Modal } from "~/components/modal";
-import { useRootContext } from "~/components/root-context";
-import { useIsDesktop } from "~/hooks/use-is-desktop";
-import { useLockScroll } from "~/hooks/use-lock-scroll";
-import { useSync } from "~/hooks/use-sync";
 import { middleware } from "~/http.server";
 import { isItemCountable } from "~/utils/economy";
 import { deleteEmptyProps } from "~/utils/misc";
@@ -46,11 +43,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Craft() {
   const { uid } = useTypedLoaderData<typeof loader>();
-  const {
-    inventory,
-    setInventory,
-    translations: { translate }
-  } = useRootContext();
+  const [inventory, setInventory] = useInventory();
+  const translate = useTranslate();
   const sync = useSync();
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(
@@ -66,7 +60,7 @@ export default function Craft() {
     quantity,
     stattrak,
     ...attributes
-  }: CSItemEditorAttributes) {
+  }: ItemEditorAttributes) {
     if (isSubmitting || selectedItem === undefined) {
       return;
     }
@@ -133,9 +127,9 @@ export default function Craft() {
         </div>
       </div>
       {isPickingItem ? (
-        <CSItemPicker onPickItem={setSelectedItem} />
+        <ItemPicker onPickItem={setSelectedItem} />
       ) : (
-        <CSItemEditor
+        <ItemEditor
           item={selectedItem}
           attributes={uid !== undefined ? inventory.get(uid) : undefined}
           onSubmit={handleSubmit}

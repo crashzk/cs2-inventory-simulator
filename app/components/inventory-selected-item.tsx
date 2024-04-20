@@ -5,12 +5,13 @@
 
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNameItemString } from "~/components/hooks/use-name-item";
 import { resolveItemImage } from "~/utils/economy";
+import { useInventory, useTranslate } from "./app-context";
 import {
   ItemSelectorContextProps,
-  useItemSelectorContext
+  useItemSelector
 } from "./item-selector-context";
-import { useRootContext } from "./root-context";
 
 function getLabelToken(token?: ItemSelectorContextProps["type"]) {
   switch (token) {
@@ -32,13 +33,11 @@ export function InventorySelectedItem({
   uid: number;
   onDismiss: () => void;
 }) {
-  const {
-    inventory,
-    translations: { translate }
-  } = useRootContext();
-  const { itemSelector } = useItemSelectorContext();
-
-  const { data: item, nametag } = inventory.get(uid);
+  const translate = useTranslate();
+  const nameItemString = useNameItemString();
+  const [inventory] = useInventory();
+  const [itemSelector] = useItemSelector();
+  const item = inventory.get(uid);
 
   return (
     <div className="m-auto w-full px-4 pb-4 text-xs drop-shadow lg:flex lg:w-[1024px] lg:items-center lg:px-0 lg:pb-0 lg:text-base">
@@ -50,9 +49,13 @@ export function InventorySelectedItem({
       </button>
       <div className="flex flex-1 select-none items-center justify-center gap-3">
         <strong>{translate(getLabelToken(itemSelector?.type))}</strong>
-        <img draggable={false} className="h-12" src={resolveItemImage(item)} />
+        <img
+          draggable={false}
+          className="h-12"
+          src={resolveItemImage(item.data)}
+        />
         <span className="text-neutral-300">
-          {item.name} {nametag !== undefined ? `| "${nametag}"` : ""}
+          {nameItemString(item, "inventory-name")}
         </span>
       </div>
     </div>

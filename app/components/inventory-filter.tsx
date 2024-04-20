@@ -14,27 +14,25 @@ import {
   INVENTORY_SECONDARY_FILTERS,
   INVENTORY_SORTERS
 } from "~/utils/inventory-filters";
+import { useInventoryFilter, useTranslate } from "./app-context";
 import { InventoryFilterButton } from "./inventory-filter-button";
-import { useRootContext } from "./root-context";
 import { Select } from "./select";
 
 export function InventoryFilter() {
+  const translate = useTranslate();
   const {
-    inventoryFilters: {
-      handleClickPrimary,
-      handleClickSecondary,
-      primary,
-      search,
-      secondaries,
-      setSearch,
-      setSorter,
-      sorter
-    },
-    translations: { translate }
-  } = useRootContext();
+    handlePrimaryClick,
+    handleSecondaryClick,
+    primaryIndex,
+    search,
+    secondaryIndexes,
+    setSearch,
+    setSorter,
+    sorter
+  } = useInventoryFilter();
 
   const secondaryFilters =
-    INVENTORY_SECONDARY_FILTERS[INVENTORY_PRIMARY_FILTERS[primary]];
+    INVENTORY_SECONDARY_FILTERS[INVENTORY_PRIMARY_FILTERS[primaryIndex]];
   const hasSecondaryFilters = secondaryFilters !== undefined;
 
   return (
@@ -42,10 +40,10 @@ export function InventoryFilter() {
       <div className="mx-auto flex w-[1024px] items-center justify-center gap-2 rounded-t bg-neutral-900/30 py-2">
         {INVENTORY_PRIMARY_FILTERS.map((value, index) => (
           <InventoryFilterButton
-            active={index === primary}
+            active={index === primaryIndex}
             children={translate(`InventoryFilter${value}`)}
             key={value}
-            onClick={handleClickPrimary(index)}
+            onClick={handlePrimaryClick(index)}
             shadowless
           />
         ))}
@@ -60,10 +58,10 @@ export function InventoryFilter() {
       >
         {secondaryFilters?.map((value, index) => (
           <InventoryFilterButton
-            active={secondaries[primary] === index}
+            active={secondaryIndexes[primaryIndex] === index}
             key={value}
             children={translate(`InventoryFilter${value}`)}
-            onClick={handleClickSecondary(index)}
+            onClick={handleSecondaryClick(index)}
             shadowless
           />
         ))}

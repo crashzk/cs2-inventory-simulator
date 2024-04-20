@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Inventory } from "@ianlucas/cslib";
+import { CS_Inventory } from "@ianlucas/cs2-lib";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
@@ -11,26 +11,24 @@ import {
   ApiActionResyncData,
   ApiActionResyncUrl
 } from "~/routes/api.action.resync._index";
+import { sync } from "~/sync";
 import { getJson } from "~/utils/fetch";
 import { parseInventory } from "~/utils/inventory";
-import { syncEvents, syncState } from "~/utils/sync";
+import { useInventory, useRules, useTranslate } from "./app-context";
 import { FillSpinner } from "./fill-spinner";
 import { Modal } from "./modal";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 
 export function SyncIndicator() {
-  const {
-    setInventory,
-    rules,
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
+  const { inventoryMaxItems, inventoryStorageUnitMaxItems } = useRules();
+  const [, setInventory] = useInventory();
   const [opacity, setOpacity] = useState(0);
-  const [showSyncFailModal, setShowSyncFailModal] = useState(false);
+  const [showSyncErrorModal, setShowSyncErrorModal] = useState(false);
   const [disableContinueButton, setDisableContinueButton] = useState(false);
 
   function handleClose() {
-    setShowSyncFailModal(false);
+    setShowSyncErrorModal(false);
   }
 
   useEffect(() => {
@@ -40,28 +38,28 @@ export function SyncIndicator() {
     function handleSyncEnd() {
       setOpacity(0);
     }
-    async function handleSyncFail() {
+    async function handleSyncError() {
       setDisableContinueButton(true);
-      setShowSyncFailModal(true);
+      setShowSyncErrorModal(true);
       const { syncedAt, inventory } =
         await getJson<ApiActionResyncData>(ApiActionResyncUrl);
       setInventory(
         new CS_Inventory({
           items: parseInventory(inventory),
-          maxItems: rules.inventoryMaxItems,
-          storageUnitMaxItems: rules.inventoryStorageUnitMaxItems
+          maxItems: inventoryMaxItems,
+          storageUnitMaxItems: inventoryStorageUnitMaxItems
         })
       );
-      syncState.syncedAt = syncedAt;
+      sync.syncedAt = syncedAt;
       setDisableContinueButton(false);
     }
-    syncEvents.addEventListener("syncstart", handleSyncStart);
-    syncEvents.addEventListener("syncend", handleSyncEnd);
-    syncEvents.addEventListener("syncfail", handleSyncFail);
+    sync.addEventListener("syncstart", handleSyncStart);
+    sync.addEventListener("syncend", handleSyncEnd);
+    sync.addEventListener("syncerror", handleSyncError);
     return () => {
-      syncEvents.removeEventListener("syncstart", handleSyncStart);
-      syncEvents.removeEventListener("syncend", handleSyncEnd);
-      syncEvents.removeEventListener("syncfail", handleSyncFail);
+      sync.removeEventListener("syncstart", handleSyncStart);
+      sync.removeEventListener("syncend", handleSyncEnd);
+      sync.removeEventListener("syncerror", handleSyncError);
     };
   }, []);
 
@@ -76,7 +74,7 @@ export function SyncIndicator() {
             >
               <FillSpinner />
             </div>
-            {showSyncFailModal && (
+            {showSyncErrorModal && (
               <Modal fixed>
                 <div className="px-4 py-2 text-sm font-bold">
                   <span className="text-neutral-400">

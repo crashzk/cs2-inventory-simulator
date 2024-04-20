@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_ItemTranslations } from "@ianlucas/cslib";
+import { CS_ItemTranslations } from "@ianlucas/cs2-lib";
 import { createHash } from "crypto";
 import { readFileSync, readdirSync } from "fs";
 import { resolve } from "path";
@@ -14,12 +14,12 @@ import { english } from "~/translations/english";
 export type SystemTranslations = Record<string, Record<string, string>>;
 
 declare global {
-  var systemTranslations: SystemTranslations;
-  var itemsTranslations: CS_ItemTranslations;
+  var $systemTranslations: SystemTranslations;
+  var $itemsTranslations: CS_ItemTranslations;
 
   interface Window {
-    systemTranslation: SystemTranslations[string];
-    itemsTranslation: CS_ItemTranslations[string];
+    $systemTranslation: SystemTranslations[string];
+    $itemsTranslation: CS_ItemTranslations[string];
   }
 }
 
@@ -27,7 +27,7 @@ function readItemTranslations() {
   const itemsTranslations: CS_ItemTranslations = {};
   const directory = resolve(
     process.cwd(),
-    "node_modules/@ianlucas/cslib/assets/translations"
+    "node_modules/@ianlucas/cs2-lib/assets/translations"
   );
   const files = readdirSync(directory);
   for (const file of files) {
@@ -40,12 +40,12 @@ function readItemTranslations() {
 }
 
 export function setupTranslation() {
-  global.systemTranslations = {
+  global.$systemTranslations = {
     brazilian,
     english
   };
 
-  global.itemsTranslations = readItemTranslations();
+  global.$itemsTranslations = readItemTranslations();
 }
 
 let checksum: string | undefined;
@@ -55,8 +55,9 @@ export function getTranslationChecksum() {
   }
   checksum = createHash("sha256")
     .update(
-      JSON.stringify(global.systemTranslations) +
-        JSON.stringify(global.itemsTranslations)
+      "v3" +
+        JSON.stringify(global.$systemTranslations) +
+        JSON.stringify(global.$itemsTranslations)
     )
     .digest("hex")
     .substring(0, 7);

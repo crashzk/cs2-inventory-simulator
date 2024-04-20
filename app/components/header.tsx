@@ -15,24 +15,27 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useToggle } from "@uidotdev/usehooks";
 import clsx from "clsx";
-import { useCraftFilterRules } from "~/hooks/use-craft-filter-rules";
-import { useIsDesktop } from "~/hooks/use-is-desktop";
-import { useIsOnTop } from "~/hooks/use-is-on-top";
-import { CRAFT_ITEM_FILTERS } from "~/utils/craft-filters";
+import { useCraftFilterRules } from "~/components/hooks/use-craft-filter-rules";
+import { useIsDesktop } from "~/components/hooks/use-is-desktop";
+import { useIsOnTop } from "~/components/hooks/use-is-on-top";
+import { ECONOMY_ITEM_FILTERS } from "~/utils/economy-filters";
+import {
+  useInventory,
+  usePreferences,
+  useTranslate,
+  useUser
+} from "./app-context";
 import { HeaderLink } from "./header-link";
 import { InventoryFilter } from "./inventory-filter";
-import { useItemSelectorContext } from "./item-selector-context";
+import { useItemSelector } from "./item-selector-context";
 import { Logo } from "./logo";
-import { useRootContext } from "./root-context";
 
 export function Header() {
-  const {
-    user,
-    inventory,
-    preferences: { hideFilters },
-    translations: { translate }
-  } = useRootContext();
-  const { itemSelector } = useItemSelectorContext();
+  const user = useUser();
+  const [inventory] = useInventory();
+  const { hideFilters } = usePreferences();
+  const translate = useTranslate();
+  const [itemSelector] = useItemSelector();
   const craftFilter = useCraftFilterRules();
   const [isMenuOpen, toggleIsMenuOpen] = useToggle(false);
   const isDesktop = useIsDesktop();
@@ -43,7 +46,7 @@ export function Header() {
   }
 
   const canCraft =
-    !inventory.isFull() && CRAFT_ITEM_FILTERS.filter(craftFilter).length > 0;
+    !inventory.isFull() && ECONOMY_ITEM_FILTERS.filter(craftFilter).length > 0;
 
   const isSelectingAnItem = itemSelector !== undefined;
 

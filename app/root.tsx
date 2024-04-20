@@ -14,12 +14,12 @@ import {
 
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { findRequestUser } from "./auth.server";
+import { AppProvider } from "./components/app-context";
 import { Background } from "./components/background";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { Inventory } from "./components/inventory";
 import { ItemSelectorProvider } from "./components/item-selector-context";
-import { RootProvider } from "./components/root-context";
 import { Splash } from "./components/splash";
 import { SyncIndicator } from "./components/sync-indicator";
 import { SyncWarn } from "./components/sync-warn";
@@ -27,10 +27,7 @@ import { TranslationScript } from "./components/translation-script";
 import { BUILD_LAST_COMMIT } from "./env.server";
 import { middleware } from "./http.server";
 import { getRule, getRules } from "./models/rule.server";
-import {
-  getBackground,
-  getCurrentBackground
-} from "./preferences/background.server";
+import { getBackground } from "./preferences/background.server";
 import { getLanguage } from "./preferences/language.server";
 import { getToggleable } from "./preferences/toggleable.server";
 import { getSeoLinks, getSeoMeta } from "./seo";
@@ -62,7 +59,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await getRule("steamCallbackUrl")
   );
   return typedjson({
-    translations: {
+    translation: {
       checksum: getTranslationChecksum()
     },
     rules: {
@@ -102,7 +99,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     },
     preferences: {
       ...(await getBackground(session)),
-      ...(await getCurrentBackground(session)),
       ...(await getLanguage(session, ipCountry)),
       ...(await getToggleable(session))
     },
@@ -111,13 +107,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function App() {
-  const providerProps = useTypedLoaderData<typeof loader>();
-  const { meta } = providerProps.rules;
+  const appProps = useTypedLoaderData<typeof loader>();
+  const { meta } = appProps.rules;
 
   return (
-    <RootProvider {...providerProps}>
+    <AppProvider {...appProps}>
       <html
-        lang={providerProps.preferences.lang}
+        lang={appProps.preferences.lang}
         onContextMenu={(event) => event.preventDefault()}
       >
         <head>
@@ -148,6 +144,6 @@ export default function App() {
           <Scripts />
         </body>
       </html>
-    </RootProvider>
+    </AppProvider>
   );
 }

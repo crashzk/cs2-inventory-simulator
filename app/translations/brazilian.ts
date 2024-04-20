@@ -7,8 +7,7 @@ import { english } from "./english";
 
 export const brazilian = {
   ...english,
-  JavaScriptRequired:
-    "JavaScript está desativado. Por favor, habilite-o e atualize a página.",
+  JavaScriptRequired: "Por favor, habilite o JavaScript e atualize a página.",
   SyncWarnText:
     "Você não está autenticado, suas mudanças não serão sincronizadas.",
   SyncErrorTitle: "Erro de sincronização",
@@ -34,7 +33,7 @@ export const brazilian = {
   CategoryPatch: "Emblema",
   CategoryEquipment: "Equipamento",
   CategoryMusicKit: "Trilha Sonora",
-  CategoryPin: "Broche",
+  CategoryCollectible: "Colecionável",
   CategoryCase: "Caixa",
   CategoryKey: "Chave",
   CategoryTool: "Ferramenta",
@@ -109,7 +108,9 @@ export const brazilian = {
   InventoryItemRareItem: "ou um item especial e extremamente raro!",
   InventoryItemStatTrakDesc:
     "Este item possui a tecnologia StatTrak™, que registra certas estatísticas quando equipado.",
-  InventoryItemStatTrakCount: "Vítimas confirmadas via StatTrak™",
+  InventoryItemStatTrakCount: "Vítimas confirmadas via StatTrak™:",
+  InventoryItemMVPStatTrakCount:
+    "★ em partidas competitivas oficiais via StatTrak™:",
   InventoryApplySticker: "Aplicar adesivo",
   InventoryScrapeSticker: "Raspar adesivo",
   InventoryItemUseStorageUnit: "Começar a usar unidade",
@@ -134,13 +135,6 @@ export const brazilian = {
   ItemSwapStatTrakAccept: "Aceitar",
   ItemSwapStatTrakClose: "Fechar",
   InspectClose: "Fechar",
-  ModelAgent: "Agente",
-  ModelGlove: "Luva",
-  ModelKnife: "Faca",
-  ModelMusicKit: "Trilha Sonora",
-  ModelPatch: "Emblema",
-  ModelPin: "Broche",
-  ModelSticker: "Adesivo",
   SettingsHeader: "Configurações",
   SettingsLanguage: "Idioma",
   SettingsBackground: "Plano de Fundo",

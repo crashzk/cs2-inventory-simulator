@@ -11,34 +11,37 @@ import {
   CS_TEAM_CT,
   CS_TEAM_T,
   CS_Team
-} from "@ianlucas/cslib";
+} from "@ianlucas/cs2-lib";
 import clsx from "clsx";
-import { useInventoryItemFloating } from "~/hooks/use-inventory-item-floating";
+import { useInventoryItemFloating } from "~/components/hooks/use-inventory-item-floating";
 import {
   EDITABLE_ITEM_TYPE,
   INSPECTABLE_ITEM_TYPE,
-  TransformedInventoryItem,
   UNLOCKABLE_ITEM_TYPE
 } from "~/utils/inventory";
+import { TransformedInventoryItem } from "~/utils/inventory-transform";
 import { format } from "~/utils/number";
-import { CSItem } from "./cs-item";
+import {
+  useInventory,
+  usePreferences,
+  useRules,
+  useTranslate
+} from "./app-context";
 import { InventoryItemContents } from "./inventory-item-contents";
 import { InventoryItemContextMenu } from "./inventory-item-context-menu";
 import { InventoryItemName } from "./inventory-item-name";
 import { InventoryItemSeed } from "./inventory-item-seed";
 import { InventoryItemStatTrak } from "./inventory-item-stattrak";
 import { InventoryItemTeams } from "./inventory-item-teams";
+import { InventoryItemTile } from "./inventory-item-tile";
 import { InventoryItemWear } from "./inventory-item-wear";
 import { alert } from "./modal-generic";
-import { useRootContext } from "./root-context";
 
 export function InventoryItem({
   disableContextMenu,
   disableHover,
   equipped,
   item,
-  model,
-  name,
   onApplySticker,
   onClick,
   onDepositToStorageUnit,
@@ -55,7 +58,6 @@ export function InventoryItem({
   onUnequip,
   onUnlockContainer,
   ownApplicableStickers,
-  quality,
   uid
 }: TransformedInventoryItem & {
   disableContextMenu?: boolean;
@@ -77,23 +79,22 @@ export function InventoryItem({
   onUnlockContainer?: (uid: number) => void;
   ownApplicableStickers?: boolean;
 }) {
+  const translate = useTranslate();
   const {
-    inventory,
-    rules: {
-      editHideCategory,
-      editHideId,
-      editHideModel,
-      editHideType,
-      inventoryItemAllowApplySticker,
-      inventoryItemAllowEdit,
-      inventoryItemAllowScrapeSticker,
-      inventoryItemAllowUnlockContainer,
-      inventoryItemEquipHideModel,
-      inventoryItemEquipHideType,
-      inventoryStorageUnitMaxItems
-    },
-    translations: { translate }
-  } = useRootContext();
+    editHideCategory,
+    editHideId,
+    editHideModel,
+    editHideType,
+    inventoryItemAllowApplySticker,
+    inventoryItemAllowEdit,
+    inventoryItemAllowScrapeSticker,
+    inventoryItemAllowUnlockContainer,
+    inventoryItemEquipHideModel,
+    inventoryItemEquipHideType,
+    inventoryStorageUnitMaxItems
+  } = useRules();
+  const { statsForNerds } = usePreferences();
+  const [inventory] = useInventory();
 
   const {
     clickContext,
@@ -185,22 +186,18 @@ export function InventoryItem({
         ref={ref}
         {...getHoverReferenceProps(getClickReferenceProps())}
       >
-        <CSItem
-          item={data}
+        <InventoryItemTile
           equipped={equipped}
-          nametag={item.nametag}
+          item={item}
           onClick={
             onClick !== undefined ? close(() => onClick(uid)) : undefined
           }
-          stattrak={item.stattrak}
-          stickers={item.stickers}
-          wear={item.wear}
         />
       </div>
       {!isFreeInventoryItem && !disableContextMenu && isClickOpen && (
         <FloatingFocusManager context={clickContext} modal={false}>
           <div
-            className="z-10 w-[192px] rounded bg-neutral-800 py-2 text-sm text-white outline-none"
+            className="z-20 w-[192px] rounded bg-neutral-800 py-2 text-sm text-white outline-none"
             ref={clickRefs.setFloating}
             style={clickStyles}
             {...getClickFloatingProps()}
@@ -356,21 +353,16 @@ export function InventoryItem({
       {!isFreeInventoryItem && !disableHover && isHoverOpen && !isClickOpen && (
         <FloatingFocusManager context={hoverContext} modal={false}>
           <div
-            className="z-20 max-w-[320px] rounded bg-neutral-900/95 px-6 py-4 text-sm text-white outline-none"
+            className="z-20 w-[440px] rounded bg-neutral-900/95 px-6 py-4 text-sm text-white outline-none"
             ref={hoverRefs.setFloating}
             style={hoverStyles}
             {...getHoverFloatingProps()}
           >
-            <InventoryItemName
-              inventoryItem={item}
-              model={model}
-              name={name}
-              quality={quality}
-            />
+            <InventoryItemName inventoryItem={item} />
             {hasTeams && <InventoryItemTeams item={item.data} />}
             {hasStatTrak && <InventoryItemStatTrak inventoryItem={item} />}
             {hasContents && <InventoryItemContents item={item.data} />}
-            {hasAttributes && (
+            {statsForNerds && hasAttributes && (
               <div className="mt-2 flex flex-col gap-2">
                 {hasWear && <InventoryItemWear inventoryItem={item} />}
                 {hasSeed && <InventoryItemSeed inventoryItem={item} />}

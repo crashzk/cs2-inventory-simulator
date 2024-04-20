@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 export const english = {
-  JavaScriptRequired:
-    "JavaScript is disabled. Please enable it and refresh the page.",
+  JavaScriptRequired: "Please turn on JavaScript and refresh the page.",
   SyncWarnText:
     "You are not authenticated, your changes will not by synchronized.",
   SyncErrorTitle: "Sync Error",
@@ -33,7 +32,7 @@ export const english = {
   CategoryPatch: "Patch",
   CategoryEquipment: "Equipment",
   CategoryMusicKit: "Music Kit",
-  CategoryPin: "Pin",
+  CategoryCollectible: "Collectible",
   CategoryCase: "Case",
   CategoryKey: "Key",
   CategoryTool: "Tool",
@@ -116,6 +115,7 @@ export const english = {
   InventoryItemStatTrakDesc:
     "This item features StatTrak™ technology, which tracks certain statistics when equipped by its owner.",
   InventoryItemStatTrakCount: "StatTrak™ Confirmed Kills:",
+  InventoryItemMVPStatTrakCount: "StatTrak™ Official Competitive MVPs:",
   InventoryApplySticker: "Apply Sticker",
   InventoryScrapeSticker: "Scrape Sticker",
   InventoryItemUseStorageUnit: "Start Using This Unit",
@@ -140,17 +140,6 @@ export const english = {
   ItemSwapStatTrakAccept: "Accept",
   ItemSwapStatTrakClose: "Close",
   InspectClose: "Close",
-  ModelAgent: "Agent",
-  ModelGlove: "Glove",
-  ModelKnife: "Knife",
-  ModelMusicKit: "Music Kit",
-  ModelPatch: "Patch",
-  ModelPin: "Pin",
-  ModelSticker: "Sticker",
-  ModelWeapon: "",
-  ModelCase: "",
-  ModelKey: "",
-  Model: "",
   SettingsHeader: "Settings",
   SettingsLanguage: "Language",
   SettingsBackground: "Background",

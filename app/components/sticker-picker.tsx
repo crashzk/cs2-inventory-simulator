@@ -17,18 +17,18 @@ import {
   CS_MIN_STICKER_WEAR,
   CS_NONE,
   CS_STICKER_WEAR_FACTOR
-} from "@ianlucas/cslib";
+} from "@ianlucas/cs2-lib";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
-import { useInput } from "~/hooks/use-input";
+import { useInput } from "~/components/hooks/use-input";
 import { stickerWearStringMaxLen, stickerWearToString } from "~/utils/economy";
-import { CSItemBrowser } from "./cs-item-browser";
-import { CSItemImage } from "./cs-item-image";
+import { useRules, useTranslate } from "./app-context";
 import { EditorInput } from "./editor-input";
 import { EditorSelect } from "./editor-select";
 import { EditorStepRangeWithInput } from "./editor-step-range-with-input";
+import { ItemBrowser } from "./item-browser";
+import { ItemImage } from "./item-image";
 import { Modal } from "./modal";
-import { useRootContext } from "./root-context";
 
 export function StickerPicker({
   isCrafting,
@@ -42,10 +42,9 @@ export function StickerPicker({
     wears: number[];
   };
 }) {
-  const {
-    rules: { craftHideId, craftHideCategory, editHideId, editHideCategory },
-    translations: { translate }
-  } = useRootContext();
+  const { craftHideId, craftHideCategory, editHideId, editHideCategory } =
+    useRules();
+  const translate = useTranslate();
 
   const [category, setCategory] = useState("");
   const [search, setSearch] = useInput("");
@@ -143,7 +142,7 @@ export function StickerPicker({
               onClick={handleClickSlot(index)}
             >
               {item !== CS_NONE ? (
-                <CSItemImage className="h-[64px] w-[85.33px]" item={item} />
+                <ItemImage className="h-[64px] w-[85.33px]" item={item} />
               ) : (
                 <div className="flex h-[64px] w-[85.33px] items-center justify-center text-neutral-700">
                   {translate("StickerPickerNA")}
@@ -222,7 +221,7 @@ export function StickerPicker({
               />
             </div>
           </div>
-          <CSItemBrowser items={filtered} onClick={handleAddSticker} />
+          <ItemBrowser items={filtered} onClick={handleAddSticker} />
         </Modal>
       )}
     </>

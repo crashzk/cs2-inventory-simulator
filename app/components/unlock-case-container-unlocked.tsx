@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy, CS_Item } from "@ianlucas/cslib";
+import { CS_Economy, CS_Item } from "@ianlucas/cs2-lib";
 import { useState } from "react";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { createFakeInventoryItem } from "~/utils/inventory";
 import { playSound } from "~/utils/sound";
-import { CSItemImage } from "./cs-item-image";
+import { useTranslate } from "./app-context";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UnlockCaseAttribute } from "./unlock-case-attribute";
 import { UseItemFooter } from "./use-item-footer";
 
@@ -21,9 +23,8 @@ export function UnlockCaseContainerUnlocked({
   onClose: () => void;
   unlockedItem: ReturnType<typeof CS_Economy.unlockCase>;
 }) {
-  const {
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
+  const nameItemString = useNameItemString();
   const [revealScale, setRevealScale] = useState(0);
 
   function handleLoad() {
@@ -43,16 +44,14 @@ export function UnlockCaseContainerUnlocked({
             className="border-b-4 pb-2 font-display font-semibold leading-10 tracking-wider drop-shadow"
             style={{ borderColor: item.rarity }}
           >
-            {attributes.stattrak !== undefined &&
-              translate("InventoryItemStatTrak")}{" "}
-            {item.name}
+            {nameItemString(createFakeInventoryItem(item, attributes))}
           </span>
         </div>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm">
-          <CSItemImage className="h-8" item={caseItem} />
-          <span>{caseItem.name}</span>
+          <ItemImage className="h-8" item={caseItem} />
+          <span>{nameItemString(caseItem)}</span>
         </div>
-        <CSItemImage
+        <ItemImage
           className="m-auto my-4 [transition:all_cubic-bezier(0.4,0,0.2,1)_250ms]"
           item={item}
           style={{ transform: `scale(${revealScale})` }}
@@ -60,6 +59,7 @@ export function UnlockCaseContainerUnlocked({
           wear={attributes.wear}
         />
         <UseItemFooter
+          className="min-w-[1024px]"
           left={
             <div className="flex items-center gap-8">
               <UnlockCaseAttribute

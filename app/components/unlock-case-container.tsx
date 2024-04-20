@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy, CS_Item } from "@ianlucas/cslib";
-import { CSItemImage } from "./cs-item-image";
+import { CS_Economy, CS_Item } from "@ianlucas/cs2-lib";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useTranslate } from "./app-context";
 import { FillSpinner } from "./fill-spinner";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UnlockCaseContainerBackground } from "./unlock-case-container-background";
 import { UnlockCaseContainerContents } from "./unlock-case-container-contents";
 import { UnlockCaseWheel } from "./unlock-case-wheel";
@@ -33,9 +34,8 @@ export function UnlockCaseContainer({
   onClose: () => void;
   onUnlock: () => void;
 }) {
-  const {
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
+  const nameItemString = useNameItemString();
 
   return (
     <>
@@ -46,7 +46,7 @@ export function UnlockCaseContainer({
       <div className="flex flex-col gap-4">
         <UseItemHeader
           actionDesc={translate("CaseUnlock")}
-          actionItem={caseItem.name}
+          actionItem={nameItemString(caseItem)}
           title={translate("CaseUnlockContainer")}
           warning={translate("CaseOnceWarn")}
         />
@@ -61,12 +61,14 @@ export function UnlockCaseContainer({
             hideCaseContents={hideCaseContents}
           />
           <UseItemFooter
+            className="max-w-[1024px]"
             left={
               keyItem !== undefined && (
                 <div className="flex items-center gap-2 font-display text-lg">
-                  <CSItemImage className="h-14" item={keyItem} />
+                  <ItemImage className="h-14" item={keyItem} />
                   <span>
-                    {translate("CaseUse")} <strong>{keyItem.name}</strong>
+                    {translate("CaseUse")}{" "}
+                    <strong>{nameItemString(keyItem)}</strong>
                   </span>
                 </div>
               )

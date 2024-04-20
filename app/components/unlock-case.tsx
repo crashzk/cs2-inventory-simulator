@@ -3,35 +3,35 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy } from "@ianlucas/cslib";
+import { CS_Economy } from "@ianlucas/cs2-lib";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
 import {
   useInventoryItem,
   useTryInventoryItem
-} from "~/hooks/use-inventory-item";
-import { useTimer } from "~/hooks/use-timer";
+} from "~/components/hooks/use-inventory-item";
+import { useTimer } from "~/components/hooks/use-timer";
 import {
   ApiActionUnlockCaseActionData,
   ApiActionUnlockCaseUrl
 } from "~/routes/api.action.unlock-case._index";
+import { dispatchSyncError, sync } from "~/sync";
 import { postJson } from "~/utils/fetch";
 import { range } from "~/utils/number";
 import { playSound } from "~/utils/sound";
-import { dispatchSyncFail, syncState } from "~/utils/sync";
-import { useRootContext } from "./root-context";
+import { useInventory, useUser } from "./app-context";
 import { UnlockCaseContainer } from "./unlock-case-container";
 import { UnlockCaseContainerUnlocked } from "./unlock-case-container-unlocked";
 
 async function unlockCase(caseUid: number, keyUid?: number) {
   const { unlockedItem, syncedAt } =
     await postJson<ApiActionUnlockCaseActionData>(ApiActionUnlockCaseUrl, {
-      syncedAt: syncState.syncedAt,
+      syncedAt: sync.syncedAt,
       caseUid,
       keyUid
     });
-  syncState.syncedAt = syncedAt;
+  sync.syncedAt = syncedAt;
   return unlockedItem;
 }
 
@@ -44,7 +44,8 @@ export function UnlockCase({
   keyUid?: number;
   onClose: () => void;
 }) {
-  const { user, inventory, setInventory } = useRootContext();
+  const user = useUser();
+  const [inventory, setInventory] = useInventory();
   const [items, setItems] = useState<
     ReturnType<typeof CS_Economy.unlockCase>[]
   >([]);
@@ -84,7 +85,7 @@ export function UnlockCase({
         }, 100);
       }, 250);
     } catch {
-      dispatchSyncFail();
+      dispatchSyncError();
       onClose();
     }
   }

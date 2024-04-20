@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComponentProps } from "react";
-import { useRootContext } from "./root-context";
+import { useTranslate } from "./app-context";
 import { Select } from "./select";
 
 export function LanguageSelect({
@@ -17,9 +17,7 @@ export function LanguageSelect({
     country: string;
   }[];
 } & Omit<ComponentProps<typeof Select>, "children" | "options">) {
-  const {
-    translations: { translate }
-  } = useRootContext();
+  const translate = useTranslate();
 
   return (
     <Select

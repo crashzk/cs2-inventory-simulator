@@ -3,17 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy } from "@ianlucas/cslib";
+import { CS_Economy } from "@ianlucas/cs2-lib";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
-import { useInput } from "~/hooks/use-input";
-import { useInventoryItem } from "~/hooks/use-inventory-item";
-import { useSync } from "~/hooks/use-sync";
+import { useInput } from "~/components/hooks/use-input";
+import { useInventoryItem } from "~/components/hooks/use-inventory-item";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useSync } from "~/components/hooks/use-sync";
 import { RenameStorageUnitAction } from "~/routes/api.action.sync._index";
-import { CSItemImage } from "./cs-item-image";
+import { useInventory, useTranslate } from "./app-context";
 import { EditorInput } from "./editor-input";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UseItemFooter } from "./use-item-footer";
 import { UseItemHeader } from "./use-item-header";
 
@@ -24,12 +25,10 @@ export function RenameStorageUnit({
   onClose: () => void;
   uid: number;
 }) {
-  const {
-    inventory,
-    setInventory,
-    translations: { translate }
-  } = useRootContext();
+  const [inventory, setInventory] = useInventory();
+  const translate = useTranslate();
   const sync = useSync();
+  const nameItemString = useNameItemString();
 
   const { data: item, nametag: defaultValue } = useInventoryItem(uid);
   const isStartUsingStorageUnit = defaultValue === undefined;
@@ -53,7 +52,7 @@ export function RenameStorageUnit({
             <div>
               <UseItemHeader
                 actionDesc={translate("RenameStorageUnitEnterName")}
-                actionItem={item.name}
+                actionItem={nameItemString(item)}
                 title={translate("RenameStorageUnitUse")}
                 warning={
                   isStartUsingStorageUnit
@@ -61,7 +60,7 @@ export function RenameStorageUnit({
                     : translate("RenameStorageUnitNewNameWarn")
                 }
               />
-              <CSItemImage
+              <ItemImage
                 className="m-auto my-8 aspect-[1.33333] max-w-[512px]"
                 item={item}
               />

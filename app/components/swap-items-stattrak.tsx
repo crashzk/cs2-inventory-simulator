@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy } from "@ianlucas/cslib";
+import { CS_Economy } from "@ianlucas/cs2-lib";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
-import { useCounter } from "~/hooks/use-counter";
-import { useSync } from "~/hooks/use-sync";
+import { useCounter } from "~/components/hooks/use-counter";
+import { useSync } from "~/components/hooks/use-sync";
 import { SwapItemsStatTrakAction } from "~/routes/api.action.sync._index";
-import { CSItemImage } from "./cs-item-image";
+import { useInventory, useTranslate } from "./app-context";
+import { ItemImage } from "./item-image";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UseItemFooter } from "./use-item-footer";
 import { UseItemHeader } from "./use-item-header";
 
@@ -26,12 +26,8 @@ export function SwapItemsStatTrak({
   toUid: number;
   toolUid: number;
 }) {
-  const {
-    inventory,
-    setInventory,
-    translations: { translate }
-  } = useRootContext();
-
+  const [inventory, setInventory] = useInventory();
+  const translate = useTranslate();
   const sync = useSync();
 
   function handleAccept() {
@@ -75,7 +71,7 @@ export function SwapItemsStatTrak({
                 {items.map(
                   ({ inventoryItem: { wear }, item, value }, index) => (
                     <div className="flex flex-col justify-center" key={index}>
-                      <CSItemImage
+                      <ItemImage
                         className="aspect-[1.33333] max-w-[256px]"
                         item={item}
                         wear={wear}

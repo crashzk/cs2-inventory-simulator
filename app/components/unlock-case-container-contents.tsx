@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy, CS_Item } from "@ianlucas/cslib";
+import { CS_Economy, CS_Item } from "@ianlucas/cs2-lib";
 import { ElementRef, useEffect, useRef, useState } from "react";
-import { CaseSpecialItem } from "./case-special-item";
-import { CSItem } from "./cs-item";
-import { useRootContext } from "./root-context";
+import { useTranslate } from "./app-context";
+import { InventoryItemSpecialTile } from "./inventory-item-special-tile";
+import { InventoryItemTile } from "./inventory-item-tile";
 
 export function UnlockCaseContainerContents({
   caseItem,
@@ -16,10 +16,7 @@ export function UnlockCaseContainerContents({
   caseItem: CS_Item;
   hideCaseContents: boolean;
 }) {
-  const {
-    translations: { translate }
-  } = useRootContext();
-
+  const translate = useTranslate();
   const [translateY, setTranslateY] = useState(0);
   const [opacity, setOpacity] = useState(0);
 
@@ -48,10 +45,10 @@ export function UnlockCaseContainerContents({
         <div className="flex h-[320px] flex-wrap gap-3 overflow-y-scroll pb-4">
           {[
             ...CS_Economy.listCaseContents(caseItem, true).map(
-              (item, index) => <CSItem key={index} item={item} />
+              (item, index) => <InventoryItemTile key={index} item={item} />
             ),
             caseItem.specials !== undefined && (
-              <CaseSpecialItem key={-1} caseItem={caseItem} />
+              <InventoryItemSpecialTile key={-1} caseItem={caseItem} />
             )
           ]}
         </div>

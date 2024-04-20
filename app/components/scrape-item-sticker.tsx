@@ -11,17 +11,18 @@ import {
   CS_NONE,
   CS_STICKER_WEAR_FACTOR,
   CS_WEAR_FACTOR
-} from "@ianlucas/cslib";
+} from "@ianlucas/cs2-lib";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ClientOnly } from "remix-utils/client-only";
-import { useSync } from "~/hooks/use-sync";
+import { useNameItemString } from "~/components/hooks/use-name-item";
+import { useSync } from "~/components/hooks/use-sync";
 import { ScrapeItemStickerAction } from "~/routes/api.action.sync._index";
 import { playSound } from "~/utils/sound";
-import { CSItemImage } from "./cs-item-image";
+import { useInventory, usePreferences, useTranslate } from "./app-context";
+import { ItemImage } from "./item-image";
 import { Modal } from "./modal";
 import { ModalButton } from "./modal-button";
-import { useRootContext } from "./root-context";
 import { UseItemFooter } from "./use-item-footer";
 import { UseItemHeader } from "./use-item-header";
 
@@ -32,22 +33,21 @@ export function ScrapeItemSticker({
   onClose: () => void;
   uid: number;
 }) {
-  const {
-    inventory,
-    setInventory,
-    preferences: { statsForNerds },
-    translations: { translate }
-  } = useRootContext();
+  const nameItemString = useNameItemString();
+  const { statsForNerds } = usePreferences();
+  const [inventory, setInventory] = useInventory();
 
+  const translate = useTranslate();
   const sync = useSync();
 
   const [confirmScrapeIndex, setConfirmScrapeIndex] = useState<number>();
 
+  const inventoryItem = inventory.get(uid);
   const {
     data: item,
     stickers: initialStickers,
     stickerswear: initialStickersWear
-  } = inventory.get(uid);
+  } = inventoryItem;
 
   const stickers = initialStickers ?? CS_INVENTORY_STICKERS;
   const stickersWear = initialStickersWear ?? CS_INVENTORY_STICKERS_WEAR;
@@ -75,7 +75,7 @@ export function ScrapeItemSticker({
 
   function handleConfirmScrape() {
     if (confirmScrapeIndex !== undefined) {
-      // We do twice because wear 0 is probably invisible in-game.  If this
+      // We do twice because wear 0 is probably invisible in-game. If this
       // doesn't hold true, we'll need to change this.
       doScrapeSticker(confirmScrapeIndex);
       doScrapeSticker(confirmScrapeIndex);
@@ -93,9 +93,9 @@ export function ScrapeItemSticker({
                 <UseItemHeader
                   title={translate("ScrapeStickerUse")}
                   warning={translate("ScrapeStickerWarn")}
-                  warningItem={item.name}
+                  warningItem={nameItemString(inventoryItem)}
                 />
-                <CSItemImage
+                <ItemImage
                   className="m-auto aspect-[1.33333] max-w-[512px]"
                   item={item}
                 />
@@ -103,7 +103,7 @@ export function ScrapeItemSticker({
                   {stickers.map((id, index) =>
                     id !== CS_NONE ? (
                       <button key={index} className="group">
-                        <CSItemImage
+                        <ItemImage
                           className="h-[126px] w-[168px] scale-90 drop-shadow-lg transition-all group-hover:scale-100 group-active:scale-125"
                           onClick={() => handleScrapeSticker(index)}
                           style={{
