@@ -17,7 +17,7 @@ export function getSeoMeta({
 }) {
   const appDescription = "Crie itens, abra caixas e raspe stickers - organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
   const appTitle = "ZK Servidores™ | Skinchanger";
-  const appWideImage = `${appUrl}/images/skinchanger-preto.png`;
+  const appWideImage = `${appUrl}/images/skinchanger.png`;
 
   return [
     {
