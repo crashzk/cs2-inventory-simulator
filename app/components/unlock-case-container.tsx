@@ -20,6 +20,7 @@ export function UnlockCaseContainer({
   caseItem,
   hideCaseContents,
   isDisplaying,
+  isSyncing,
   items,
   keyItem,
   onClose,
@@ -29,6 +30,7 @@ export function UnlockCaseContainer({
   caseItem: CS_Item;
   hideCaseContents: boolean;
   isDisplaying: boolean;
+  isSyncing: boolean;
   items: ReturnType<typeof CS_Economy.unlockCase>[];
   keyItem?: CS_Item;
   onClose: () => void;
@@ -43,7 +45,7 @@ export function UnlockCaseContainer({
         canUnlock={canUnlock}
         caseItem={caseItem}
       />
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col justify-center gap-4">
         <UseItemHeader
           actionDesc={translate("CaseUnlock")}
           actionItem={nameItemString(caseItem)}
@@ -61,7 +63,7 @@ export function UnlockCaseContainer({
             hideCaseContents={hideCaseContents}
           />
           <UseItemFooter
-            className="max-w-[1024px]"
+            className="lg:max-w-[1024px]"
             left={
               keyItem !== undefined && (
                 <div className="flex items-center gap-2 font-display text-lg">
@@ -75,7 +77,7 @@ export function UnlockCaseContainer({
             }
             right={
               <>
-                {canUnlock ? (
+                {canUnlock && !isSyncing ? (
                   <ModalButton
                     children={translate("CaseUnlockContainer")}
                     disabled={!canUnlock}
