@@ -4,46 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { prisma } from "~/db.server";
-import { getRule } from "./rule.server";
 
-export async function resolveDomain(request: Request) {
-  const appUrl = new URL(await getRule("steamCallbackUrl"));
-  const url = new URL(appUrl);
-  if (request.url === url.pathname) {
-    return url.hostname;
-  }
+export async function isValidDomain(hostname: string) {
   return (
-    (
-      await prisma.domain.findFirst({
-        select: {
-          id: true
-        },
-        where: {
-          id: url.hostname,
-          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
-        }
-      })
-    )?.id ?? appUrl.hostname
+    (await prisma.domain.count({
+      where: { hostname }
+    })) > 0
   );
-}
-
-export async function resolveUrlDomain(request: Request, originalUrl: string) {
-  const requestUrl = new URL(request.url);
-  const url = new URL(originalUrl);
-  if (requestUrl.hostname === url.hostname) {
-    return url.toString();
-  }
-  const domain = await prisma.domain.findFirst({
-    select: {
-      id: true
-    },
-    where: {
-      id: requestUrl.hostname,
-      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
-    }
-  });
-  if (domain !== null) {
-    url.hostname = domain.id;
-  }
-  return url.toString();
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { SteamStrategy as BaseSteamStrategy } from "@ianlucas/remix-auth-steam";
-import { resolveDomain, resolveUrlDomain } from "./models/domain.server";
+import { isValidDomain } from "./models/domain.server";
 import { getRule } from "./models/rule.server";
 import { upsertUser } from "./models/user.server";
 
@@ -12,16 +12,17 @@ export class SteamStrategy extends BaseSteamStrategy<string> {
   constructor() {
     super(
       async (request) => {
+        const requestUrl = new URL(request.url);
+        const returnUrl = new URL(await getRule("steamCallbackUrl"));
+        if (await isValidDomain(requestUrl.hostname)) {
+          returnUrl.hostname = requestUrl.hostname;
+        }
         return {
-          returnURL: await resolveUrlDomain(
-            request,
-            await getRule("steamCallbackUrl")
-          ),
+          returnURL: returnUrl.toString(),
           apiKey: await getRule("steamApiKey")
         };
       },
-      async ({ request, user }) =>
-        await upsertUser(await resolveDomain(request), user)
+      async ({ user }) => await upsertUser(user)
     );
   }
 }
