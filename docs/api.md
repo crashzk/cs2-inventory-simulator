@@ -24,7 +24,18 @@ GET https://inventory.cstrike.app/api/inventory/{steamID64}.json
     stattrak?: number;
     stickers?: number[];
     stickerswear?: number[];
-    storage?: CS_BaseInventoryItem[];
+    storage?: {
+      caseid?: number;
+      id: number;
+      nametag?: string;
+      seed?: number;
+      stattrak?: number;
+      stickers?: number[];
+      stickerswear?: number[];
+      uid: number;
+      updatedat?: number;
+      wear?: number;
+    }[];
     uid: number;
     updatedat?: number;
     wear?: number;
@@ -120,7 +131,7 @@ POST https://inventory.cstrike.app/api/sign-in
 #### Request
 
 > [!IMPORTANT]  
-> API key must have `api` or `api_auth` scope.
+> API key must have `api_auth` scope.
 
 ```typescript
 type GetUserSignInTokenRequest = {
