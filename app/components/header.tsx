@@ -25,6 +25,7 @@ import {
   useTranslate,
   useUser
 } from "./app-context";
+import { DonateHeaderLink } from "./donate-header-link";
 import { HeaderLink } from "./header-link";
 import { InventoryFilter } from "./inventory-filter";
 import { useItemSelector } from "./item-selector-context";
@@ -94,7 +95,8 @@ export function Header() {
                     icon={faSteam}
                     label={translate("HeaderSignInLabel")}
                   />
-                  <div className="flex flex-1 justify-end">
+                  <div className="gap-4 lg:flex lg:flex-1 lg:justify-end">
+                    <DonateHeaderLink />
                     <HeaderLink
                       to="/settings"
                       icon={faCog}
@@ -111,7 +113,8 @@ export function Header() {
                     onClick={closeMenu}
                     to="/sign-out"
                   />
-                  <div className="flex flex-1 justify-end">
+                  <div className="gap-4 lg:flex lg:flex-1 lg:justify-end">
+                    <DonateHeaderLink />
                     <HeaderLink to="/settings" onClick={closeMenu}>
                       <span className="text-neutral-400">
                         {translate("HeaderSignedInAsLabel")}
