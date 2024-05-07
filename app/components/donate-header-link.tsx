@@ -12,7 +12,7 @@ export function DonateHeaderLink() {
   self-hosting this app! */
   return (
     typeof window !== "undefined" &&
-    ["inventory.cstrike.app", "localhost"].includes(
+    ["cs2.zkservidores.com", "localhost"].includes(
       window.location.hostname
     ) && (
       <HeaderLink
