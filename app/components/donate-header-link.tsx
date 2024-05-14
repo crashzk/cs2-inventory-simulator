@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { faGratipay } from "@fortawesome/free-brands-svg-icons";
+import { GiPolarStar } from "@fortawesome/free-brands-svg-icons";
 import { useTranslate } from "./app-context";
 import { HeaderLink } from "./header-link";
 
@@ -13,15 +13,15 @@ export function DonateHeaderLink() {
   self-hosting this app! */
   return (
     typeof window !== "undefined" &&
-    ["inventory.cstrike.app", "localhost"].includes(
+    ["cs2.zkservidores.com", "localhost"].includes(
       window.location.hostname
     ) && (
       <HeaderLink
         className="font-bold"
-        icon={faGratipay}
+        icon={GiPolarStar}
         label={translate("HeaderDonate")}
         target="_blank"
-        to="https://donate.cstrike.app"
+        to="https://vip.zkservidores.com"
       />
     )
   );

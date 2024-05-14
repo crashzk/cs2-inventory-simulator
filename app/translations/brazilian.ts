@@ -57,7 +57,7 @@ export const brazilian = {
   EditorWear: /* csgo_brazilian.txt */"Desgaste",
   GridItemNoItemsToDisplay: "Nenhum item para exibir",
   HeaderCraftLabel: "Criar Item",
-  HeaderDonate: "Doar",
+  HeaderDonate: "Adquira VIP",
   HeaderInventoryLabel: "Inventário",
   HeaderSettingsLabel: "Configurações",
   HeaderSignInLabel: "Entrar e sincronizar",

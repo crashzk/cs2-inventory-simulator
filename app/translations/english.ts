@@ -58,7 +58,7 @@ export const english = {
   GridItemNoItemsToDisplay: "No items to display",
   HeaderAPILabel: "API",
   HeaderCraftLabel: "Craft Item",
-  HeaderDonate: "Donate",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventory",
   HeaderSettingsLabel: "Settings",
   HeaderSignInLabel: "Sign-in to sync",
