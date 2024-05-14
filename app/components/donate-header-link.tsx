@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GiPolarStar } from "@fortawesome/free-brands-svg-icons";
+import { faGratipay } from "@fortawesome/free-brands-svg-icons";
 import { useTranslate } from "./app-context";
 import { HeaderLink } from "./header-link";
 
@@ -18,7 +18,7 @@ export function DonateHeaderLink() {
     ) && (
       <HeaderLink
         className="font-bold"
-        icon={GiPolarStar}
+        icon={faGratipay}
         label={translate("HeaderDonate")}
         target="_blank"
         to="https://vip.zkservidores.com"
