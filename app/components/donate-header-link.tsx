@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { faStar } from "@fortawesome/free-classic-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useTranslate } from "./app-context";
 import { HeaderLink } from "./header-link";
 
