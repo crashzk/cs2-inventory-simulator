@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Inventory } from "@ianlucas/cs2-lib";
+import { CS2Inventory, CS2InventorySpec } from "@ianlucas/cs2-lib";
 import {
   ContextType,
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useMemo
@@ -15,33 +15,31 @@ import {
 import { useTypedLoaderData } from "remix-typedjson";
 import { useInventoryFilterState } from "~/components/hooks/use-inventory-filter-state";
 import { useInventoryState } from "~/components/hooks/use-inventory-state";
-import { useTranslation } from "~/components/hooks/use-translation";
+import { useLocalization } from "~/components/hooks/use-translation";
 import type { loader } from "~/root";
 import { AddFromCacheAction } from "~/routes/api.action.sync._index";
 import { pushToSync, sync } from "~/sync";
 import { updateEconomyTranslation } from "~/utils/economy";
 import { getFreeItemsToDisplay, parseInventory } from "~/utils/inventory";
 import {
-  sortItemsByEquipped,
-  transform,
-  TransformedInventoryItems
-} from "~/utils/inventory-transform";
-import type { SyncInventoryShape } from "~/utils/shapes.server";
+  cacheInventoryData,
+  getCachedInventoryData,
+  getSanitizedCachedInventoryData
+} from "~/utils/inventory-cached-data";
 import {
-  retrieveInventoryItems,
-  retrieveUserId,
-  storeInventoryItems,
-  storeUserId
-} from "~/utils/user";
+  TransformedInventoryItems,
+  sortItemsByEquipped,
+  transform
+} from "~/utils/inventory-transform";
+import { cacheAuthenticatedUserId } from "~/utils/user-cached-data";
 
 const AppContext = createContext<
   {
-    inventory: CS_Inventory;
+    inventory: CS2Inventory;
     inventoryFilter: ReturnType<typeof useInventoryFilterState>;
     items: TransformedInventoryItems;
-    requireAuth: boolean;
-    setInventory: (value: CS_Inventory) => void;
-    translation: ReturnType<typeof useTranslation>;
+    setInventory: (value: CS2Inventory) => void;
+    localization: ReturnType<typeof useLocalization>;
   } & ReturnType<typeof useTypedLoaderData<typeof loader>>
 >(null!);
 
@@ -49,8 +47,8 @@ export function useAppContext() {
   return useContext(AppContext);
 }
 
-export function useTranslate() {
-  return useAppContext().translation.translate;
+export function useLocalize() {
+  return useAppContext().localization.localize;
 }
 
 export function useRules() {
@@ -79,7 +77,7 @@ export function useInventoryFilter() {
 }
 
 export function useTranslationChecksum() {
-  return useAppContext().translation.checksum;
+  return useAppContext().localization.checksum;
 }
 
 export function AppProvider({
@@ -87,72 +85,63 @@ export function AppProvider({
   logo,
   preferences,
   rules,
-  translation: { checksum },
+  localization: { checksum },
   user
 }: Omit<
   ContextType<typeof AppContext>,
-  | "inventory"
-  | "inventoryFilter"
-  | "items"
-  | "requireAuth"
-  | "setInventory"
-  | "translation"
+  "inventory" | "inventoryFilter" | "items" | "localization" | "setInventory"
 > & {
   children: ReactNode;
-  translation: {
+  localization: {
     checksum: string;
   };
 }) {
   const inventorySpec = {
-    items: user?.inventory
+    data: user?.inventory
       ? parseInventory(user?.inventory)
-      : retrieveInventoryItems(),
+      : getCachedInventoryData(),
     maxItems: rules.inventoryMaxItems,
     storageUnitMaxItems: rules.inventoryStorageUnitMaxItems
-  };
+  } satisfies Partial<CS2InventorySpec>;
   const [inventory, setInventory] = useInventoryState(
-    new CS_Inventory(inventorySpec)
+    new CS2Inventory(inventorySpec)
   );
   const inventoryFilter = useInventoryFilterState();
-  const translation = useTranslation({
+  const localization = useLocalization({
     checksum,
     language: preferences.language
   });
 
   useEffect(() => {
-    storeInventoryItems(inventory.export());
+    cacheInventoryData(inventory.stringify());
   }, [inventory]);
 
   useEffect(() => {
-    const items = retrieveInventoryItems();
-    if (user !== undefined && user.inventory === null && items.length > 0) {
-      pushToSync({
-        type: AddFromCacheAction,
-        items: items as SyncInventoryShape
-      });
-      setInventory(
-        new CS_Inventory({
-          items: items.map((item) => ({
-            ...item,
-            equipped: undefined,
-            equippedCT: undefined,
-            equippedT: undefined
-          })),
-          maxItems: rules.inventoryMaxItems,
-          storageUnitMaxItems: rules.inventoryStorageUnitMaxItems
-        })
-      );
-    }
     if (user !== undefined) {
-      storeUserId(user.id);
+      if (user.inventory === null) {
+        const cachedData = getSanitizedCachedInventoryData();
+        if (cachedData !== undefined) {
+          pushToSync({
+            type: AddFromCacheAction,
+            data: cachedData
+          });
+          setInventory(
+            new CS2Inventory({
+              ...inventorySpec,
+              data: cachedData
+            })
+          );
+        }
+      }
+      cacheAuthenticatedUserId(user.id);
       sync.syncedAt = user.syncedAt.getTime();
     }
   }, [user]);
 
   useEffect(() => {
-    updateEconomyTranslation(translation.items);
-    setInventory(new CS_Inventory(inventorySpec));
-  }, [translation.items]);
+    updateEconomyTranslation(localization.items);
+    setInventory(new CS2Inventory(inventorySpec));
+  }, [localization.items]);
 
   const items = useMemo(
     () =>
@@ -185,12 +174,11 @@ export function AppProvider({
         inventory,
         inventoryFilter,
         items,
+        localization,
         logo,
         preferences,
-        requireAuth: retrieveUserId() !== undefined,
         rules,
         setInventory,
-        translation,
         user
       }}
     >

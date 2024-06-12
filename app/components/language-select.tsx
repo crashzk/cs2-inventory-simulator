@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComponentProps } from "react";
-import { useTranslate } from "./app-context";
+import { LanguageName } from "~/data/languages";
+import { useLocalize } from "./app-context";
 import { Select } from "./select";
 
 export function LanguageSelect({
@@ -13,30 +14,31 @@ export function LanguageSelect({
   value
 }: {
   languages: {
-    name: string;
+    name: LanguageName;
     country: string;
   }[];
 } & Omit<ComponentProps<typeof Select>, "children" | "options">) {
-  const translate = useTranslate();
+  const localize = useLocalize();
 
   return (
     <Select
       value={value}
       onChange={onChange}
       options={languages.map(({ name, country }) => ({
-        label: country,
+        flag: country.toUpperCase(),
+        label: localize(`Language$${name}`),
         value: name
       }))}
-      children={({ label, value }) => (
+      children={({ flag, label }) => (
         <>
           <img
-            src={`/countries/${label}.svg`}
-            className="h-[24px] w-[34px]"
-            alt={translate(`LanguageN${value}`)}
-            title={translate(`LanguageN${value}`)}
+            src={`/images/flags/${flag}.svg`}
+            className="h-[16px] w-[24px]"
+            alt={label}
+            title={label}
             draggable={false}
           />
-          {translate(`LanguageN${value}`)}
+          {label}
         </>
       )}
     />

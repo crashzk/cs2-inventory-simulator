@@ -3,26 +3,31 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS_Economy, CS_Inventory } from "@ianlucas/cs2-lib";
+import { CS2Inventory, CS2UnlockedItem } from "@ianlucas/cs2-lib";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { z } from "zod";
+import { api } from "~/api.server";
 import { requireUser } from "~/auth.server";
 import { middleware } from "~/http.server";
 import { getRequestHostname } from "~/models/domain.server";
 import { expectRule, getRule } from "~/models/rule.server";
 import { updateUserInventory } from "~/models/user.server";
-import { conflict } from "~/response.server";
+import { conflict, methodNotAllowed } from "~/responses.server";
 import { parseInventory } from "~/utils/inventory";
 import { nonNegativeInt, positiveInt } from "~/utils/shapes";
 
 export const ApiActionUnlockCaseUrl = "/api/action/unlock-case";
 
-export type ApiActionUnlockCaseActionData = ReturnType<
-  Awaited<ReturnType<typeof action>>["json"]
->;
+export type ApiActionUnlockCaseActionData = {
+  syncedAt: number;
+  unlockedItem: CS2UnlockedItem;
+};
 
-export async function action({ request }: ActionFunctionArgs) {
+export const action = api(async ({ request }: ActionFunctionArgs) => {
   await middleware(request);
+  if (request.method !== "POST") {
+    throw methodNotAllowed;
+  }
   const domainHostname = getRequestHostname(request);
   const {
     id: userId,
@@ -40,20 +45,20 @@ export async function action({ request }: ActionFunctionArgs) {
   if (syncedAt !== currentSyncedAt.getTime()) {
     throw conflict;
   }
-  const inventory = new CS_Inventory({
-    items: parseInventory(rawInventory),
+  const inventory = new CS2Inventory({
+    data: parseInventory(rawInventory),
     maxItems: await getRule("inventoryMaxItems", userId),
     storageUnitMaxItems: await getRule("inventoryStorageUnitMaxItems", userId)
   });
-  const unlockedItem = CS_Economy.unlockCase(inventory.get(caseUid).id);
-  inventory.unlockCase(unlockedItem, caseUid, keyUid);
+  const unlockedItem = inventory.get(caseUid).unlockContainer();
+  inventory.unlockContainer(unlockedItem, caseUid, keyUid);
   const { syncedAt: responseSyncedAt } = await updateUserInventory(
     domainHostname,
     userId,
-    inventory.export()
+    inventory.stringify()
   );
-  return json({
+  return json<ApiActionUnlockCaseActionData>({
     unlockedItem,
     syncedAt: responseSyncedAt.getTime()
   });
-}
+});
