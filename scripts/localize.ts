@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CS2KeyValues } from "@ianlucas/cs2-lib";
+import { CS2KeyValues, assert } from "@ianlucas/cs2-lib";
 import { fail } from "assert";
 import { readFileSync, readdirSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { CS2_CSGO_PATH } from "~/env.server";
 import { SystemLocalizationByLanguage } from "~/localization.server";
-import { assert } from "~/utils/misc";
 
 function replace(
   str: string,
@@ -30,6 +29,8 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   token: string;
   transform: (value: string, lang: string) => string;
 }> = {
+  ApplyPatchUse: "popup_can_patch_button",
+  ApplyPatchWarn: "SFUI_InvUse_Warning_use_can_stick_patch",
   ApplyStickerCancel: "Cancel_Button",
   ApplyStickerUse: "popup_can_stick_title_sticker",
   ApplyStickerUseOn: { token: "popup_can_stick_desc", transform: (value) => replace(value, /<b>\s?\{s:tool_target_name\}\<\/b>/, '') },
@@ -61,6 +62,7 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   CategoryTool: "CSGO_Type_Tool",
   EditorCancel: "Cancel_Button",
   EditorNametag: "ToolType_name",
+  EditorPatches: "inv_nav_patches",
   EditorQuantity: "op_store_column_title_quantity",
   EditorRandom: "SFUI_Map_random",
   EditorReset: "settings_reset",
@@ -70,7 +72,8 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   EditorStickers: "Inv_Category_sticker",
   EditorWear: "Workshop_Preview_Wear",
   InspectClose: "GameUI_Close",
-  InventoryApplySticker: "SFUI_InvUse_Use_Sticker",
+  InventoryApplyPatch: "SFUI_InvContextMenu_can_patch",
+  InventoryApplySticker: "SFUI_InvContextMenu_can_sticker",
   InventoryFilterAgents: "LoadoutSlot_customplayer",
   InventoryFilterAll: "Inv_Category_any",
   InventoryFilterAllEquipment: "inv_nav_weapons_all",
@@ -117,8 +120,10 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   InventoryItemNew: "inv_session_prop_recent",
   InventoryItemRareItem: "Econ_Revolving_Loot_List_Rare_Item",
   InventoryItemRarity: "inv_header_rarity",
+  InventoryItemRemovePatch: "popup_remove_patch_button",
   InventoryItemRename: { token: "RT_Rn_A", transform: (value) => replace(value, '%s1', '') },
   InventoryItemRenameStorageUnit: "inv_context_yourcasket",
+  InventoryItemScrapeSticker: "popup_remove_sticker_button",
   InventoryItemStatTrak: "CSGO_KillEater_Hud",
   InventoryItemStatTrakCount: ["#KillEaterEventType_Kills", ":"],
   InventoryItemStatTrakDesc: "Attrib_KillEater",
@@ -136,7 +141,6 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   InventoryItemUnequip: "SFUI_InvContextMenu_Unequip",
   InventoryItemUnlockContainer: "inv_context_open_package",
   InventoryItemUseStorageUnit: "inv_context_newcasket",
-  InventoryScrapeSticker: "popup_remove_sticker_button",
   InventorySelectAnItem: "inv_select_item_use",
   InventorySelectInspectContents: "inv_select_casketcontents",
   InventorySelectItemToDeposit: "inv_select_casketstore",
@@ -186,6 +190,10 @@ const STRINGS_FROM_GAME: Record<string, string | string[] | {
   ItemWearFT: "SFUI_InvTooltip_Wear_Amount_2",
   ItemWearMW: "SFUI_InvTooltip_Wear_Amount_1",
   ItemWearWW: "SFUI_InvTooltip_Wear_Amount_3",
+  RemovePatchRemove: "SFUI_InvContextMenu_can_stick_Wear_full_patch",
+  RemovePatchRemoveDesc: "SFUI_Patch_Remove_Desc",
+  RemovePatchUse: "SFUI_Patch_Remove",
+  RemovePatchWarn: { token: "popup_can_stick_scrape_full_patch", transform: (value) => replace(value, /<b>\s?\{s:tool_target_name\}\<\/b>/, '') },
   RenameCancel: "Cancel_Button",
   RenameEnterName: { token: "popup_nameable_desc", transform: (value) => replace(value, '<b>{s:itemname}</b>', '') },
   RenameRename: { token: "RT_Rn_A", transform: (value) => replace(value, '%s1', '') },

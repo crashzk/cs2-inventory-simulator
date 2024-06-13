@@ -32,7 +32,7 @@ import { getRule, getRules } from "./models/rule.server";
 import { getBackground } from "./preferences/background.server";
 import { getLanguage } from "./preferences/language.server";
 import { getToggleable } from "./preferences/toggleable.server";
-import { getSeoLinks, getSeoMeta } from "./seo";
+import { getSeoLinks, getSeoMeta } from "./root-seo";
 import { getSession } from "./session.server";
 import styles from "./tailwind.css?url";
 
@@ -68,6 +68,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       ...(await getRules(
         [
           "craftAllowNametag",
+          "craftAllowPatches",
           "craftAllowSeed",
           "craftAllowStatTrak",
           "craftAllowStickers",
@@ -77,6 +78,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           "craftHideModel",
           "craftHideType",
           "editAllowNametag",
+          "editAllowPatches",
           "editAllowSeed",
           "editAllowStatTrak",
           "editAllowStickers",
@@ -85,9 +87,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
           "editHideId",
           "editHideModel",
           "editHideType",
+          "inventoryItemAllowApplyPatch",
           "inventoryItemAllowApplySticker",
           "inventoryItemAllowEdit",
           "inventoryItemAllowInspectInGame",
+          "inventoryItemAllowRemovePatch",
           "inventoryItemAllowScrapeSticker",
           "inventoryItemAllowUnlockContainer",
           "inventoryItemEquipHideModel",

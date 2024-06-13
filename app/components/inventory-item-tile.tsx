@@ -49,11 +49,22 @@ export function InventoryItemTile({
         )}
         {inventoryItem?.stickers !== undefined && (
           <div className="absolute bottom-0 left-0 flex items-center p-1">
-            {inventoryItem.someStickers().map(([index, { id }]) => (
+            {inventoryItem.someStickers().map(([slot, { id }]) => (
               <ItemImage
                 className="h-5"
                 item={CS2Economy.getById(id)}
-                key={index}
+                key={slot}
+              />
+            ))}
+          </div>
+        )}
+        {inventoryItem?.patches !== undefined && (
+          <div className="absolute bottom-0 left-0 flex items-center p-1">
+            {inventoryItem.somePatches().map(([slot, id]) => (
+              <ItemImage
+                className="h-5"
+                item={CS2Economy.getById(id)}
+                key={slot}
               />
             ))}
           </div>
@@ -82,7 +93,7 @@ export function InventoryItemTile({
         className="h-1 shadow shadow-black/50"
         style={{ backgroundColor: item.rarity }}
       />
-      <div className="mt-2 text-[12px] leading-3 text-white drop-shadow-[0_0_1px_rgba(0,0,0,1)]">
+      <div className="mt-1 font-display text-[12px] leading-3 text-white drop-shadow-[0_0_1px_rgba(0,0,0,1)]">
         {has(model) && <div className="font-bold">{model}</div>}
         {has(name) && <div>{name}</div>}
       </div>

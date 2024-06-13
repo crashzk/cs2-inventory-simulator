@@ -59,6 +59,18 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 - **Type:** `boolean`
 - **Default:** `true`
 
+### `inventoryItemAllowApplyPatch`
+
+- Indicates whether the user can apply patch to an inventory item.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `inventoryItemAllowRemovePatch`
+
+- Indicates whether the user can remove patch in an inventory item.
+- **Type:** `boolean`
+- **Default:** `true`
+
 ### `inventoryItemAllowUnlockContainer`
 
 - Indicates whether the user can unlock a container inventory item.
@@ -131,6 +143,12 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 - **Type:** `boolean`
 - **Default:** `true`
 
+### `craftAllowPatches`
+
+- Indicates whether the user can define Patches when crafting.
+- **Type:** `boolean`
+- **Default:** `true`
+
 ### `craftAllowWear`
 
 - Indicates whether the user can define Wear when crafting.
@@ -182,6 +200,12 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 ### `editAllowStickers`
 
 - Indicates whether the user can define Stickers when editing.
+- **Type:** `boolean`
+- **Default:** `true`
+
+### `editAllowPatches`
+
+- Indicates whether the user can define Patches when editing.
 - **Type:** `boolean`
 - **Default:** `true`
 

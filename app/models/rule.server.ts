@@ -3,25 +3,29 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { assert, fail } from "@ianlucas/cs2-lib";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { STEAM_API_KEY, STEAM_CALLBACK_URL } from "~/env.server";
-import { assert, fail } from "~/utils/misc";
 
 const booleanRulesNames = [
   "craftAllowNametag",
+  "craftAllowPatches",
   "craftAllowSeed",
   "craftAllowStatTrak",
   "craftAllowStickers",
   "craftAllowWear",
   "editAllowNametag",
+  "editAllowPatches",
   "editAllowSeed",
   "editAllowStatTrak",
   "editAllowStickers",
   "editAllowWear",
+  "inventoryItemAllowApplyPatch",
   "inventoryItemAllowApplySticker",
   "inventoryItemAllowEdit",
   "inventoryItemAllowInspectInGame",
+  "inventoryItemAllowRemovePatch",
   "inventoryItemAllowScrapeSticker",
   "inventoryItemAllowUnlockContainer"
 ] as const;
@@ -354,6 +358,16 @@ export async function setupRules() {
     input: []
   });
   await addRule({
+    name: "inventoryItemAllowApplyPatch",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "inventoryItemAllowRemovePatch",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
     name: "inventoryItemAllowApplySticker",
     type: "boolean",
     input: true
@@ -404,6 +418,11 @@ export async function setupRules() {
     input: true
   });
   await addRule({
+    name: "craftAllowPatches",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
     name: "editAllowNametag",
     type: "boolean",
     input: true
@@ -425,6 +444,11 @@ export async function setupRules() {
   });
   await addRule({
     name: "editAllowStickers",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "editAllowPatches",
     type: "boolean",
     input: true
   });

@@ -15,10 +15,10 @@ export function getSeoMeta({
   appUrl: string;
   appSiteName: string;
 }) {
-  const appDescription = "Crie itens, abra caixas e raspe stickers - organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
+  const appDescription =
+    "Crie itens, abra caixas e raspe stickers - organize e planeje o inventário dos seus sonhos em nossos servidores CS2";
   const appTitle = "ZK Servidores™ | Skinchanger";
   const appWideImage = `${appUrl}/images/skinchanger.png`;
-
   return [
     {
       name: "theme-color",
@@ -79,13 +79,13 @@ export function getSeoLinks({ appUrl }: { appUrl: string }) {
   return [
     ...linkImages.map((size) => ({
       rel: "apple-touch-icon",
-      href: `${appUrl}/link-images/${size}.png`,
+      href: `${appUrl}/images/thumbnails/${size}.png`,
       sizes: `${size}x${size}`
     })),
     ...linkImages.map((size) => ({
       rel: "icon",
       type: "image/png",
-      href: `${appUrl}/link-images/${size}.png`,
+      href: `${appUrl}/images/thumbnails/${size}.png`,
       sizes: `${size}x${size}`
     }))
   ];
