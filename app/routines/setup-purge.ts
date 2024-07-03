@@ -3,17 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { middleware } from "~/http.server";
-import { getMetaTitle } from "~/root-meta";
+import { prisma } from "~/db.server";
 
-export const meta = getMetaTitle();
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  await middleware(request);
-  return null;
-}
-
-export default function Index() {
-  return null;
+export async function setupPurge() {
+  await prisma.userCache.deleteMany();
 }

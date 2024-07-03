@@ -35,9 +35,15 @@ const numberRulesNames = [
 ] as const;
 const numberArrayRulesNames = ["craftHideId", "editHideId"] as const;
 const stringRulesNames = [
+  "appCountry",
+  "appFooterName",
+  "appLogoUrl",
+  "appName",
+  "appSeoDescription",
+  "appSeoImageUrl",
+  "appSeoTitle",
   "steamApiKey",
-  "steamCallbackUrl",
-  "appCountry"
+  "steamCallbackUrl"
 ] as const;
 const stringArrayRulesName = [
   "craftHideCategory",
@@ -146,7 +152,7 @@ export async function getRule(name: RuleNames, userId?: string) {
     return Number(value);
   }
   if (stringRulesNames.includes(name as StringRuleNames)) {
-    return value;
+    return value.trim();
   }
   if (stringArrayRulesName.includes(name as StringArrayRuleNames)) {
     return value
@@ -296,6 +302,36 @@ export async function setupRules() {
     name: "inventoryStorageUnitMaxItems",
     type: "number",
     input: 32
+  });
+  await addRule({
+    name: "appLogoUrl",
+    type: "string",
+    input: ""
+  });
+  await addRule({
+    name: "appName",
+    type: "string",
+    input: ""
+  });
+  await addRule({
+    name: "appFooterName",
+    type: "string",
+    input: ""
+  });
+  await addRule({
+    name: "appSeoDescription",
+    type: "string",
+    input: ""
+  });
+  await addRule({
+    name: "appSeoImageUrl",
+    type: "string",
+    input: ""
+  });
+  await addRule({
+    name: "appSeoTitle",
+    type: "string",
+    input: ""
   });
   await addRule({
     name: "appCountry",

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { isOurHostname } from "~/utils/misc";
 import { useLocalize } from "./app-context";
 import { HeaderLink } from "./header-link";
 
@@ -16,6 +17,7 @@ export function DonateHeaderLink() {
     ["cs2.zkservidores.com", "localhost"].includes(
       window.location.hostname
     ) && (
+    isOurHostname() && (
       <HeaderLink
         className="font-bold"
         icon={faStar}

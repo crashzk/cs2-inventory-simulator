@@ -5,7 +5,7 @@
 
 import { faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useNavigate, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import {
@@ -24,12 +24,11 @@ import { SettingsLabel } from "~/components/settings-label";
 import { backgrounds } from "~/data/backgrounds";
 import { languages } from "~/data/languages";
 import { middleware } from "~/http.server";
+import { getMetaTitle } from "~/root-meta";
 import { ApiActionPreferencesUrl } from "./api.action.preferences._index";
 import { RemoveAllItemsAction } from "./api.action.sync._index";
 
-export const meta: MetaFunction = () => {
-  return [{ title: "Settings - ZK Servidores™ | Skinchanger" }];
-};
+export const meta = getMetaTitle("HeaderSettingsLabel");
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await middleware(request);
@@ -107,10 +106,13 @@ export default function Settings() {
           <Select
             value={background ?? ""}
             onChange={setBackground}
-            options={backgrounds.concat({
-              label: localize("SettingsBackgroundRandom"),
-              value: ""
-            })}
+            options={[
+              {
+                label: localize("SettingsBackgroundRandom"),
+                value: ""
+              },
+              ...backgrounds
+            ]}
             children={({ label }) => label}
           />
         </SettingsLabel>
@@ -127,7 +129,7 @@ export default function Settings() {
       <div className="mt-4 px-4">
         {inventory.size() > 0 && (
           <button
-            className="flex w-full cursor-default items-center gap-2 rounded border border-neutral-500/20 px-2 py-1 font-semibold text-red-500 transition-all hover:border-red-500"
+            className="flex cursor-default items-center gap-2 rounded border border-neutral-500/20 px-2 py-1 font-semibold text-red-500 transition-all hover:border-red-500"
             onClick={handleRemoveAllItems}
           >
             <FontAwesomeIcon icon={faTrashCan} className="h-4" />

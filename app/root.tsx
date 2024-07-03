@@ -65,6 +65,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     rules: {
       ...(await getRules(
         [
+          "appFooterName",
+          "appLogoUrl",
+          "appName",
+          "appSeoDescription",
+          "appSeoImageUrl",
+          "appSeoTitle",
           "craftAllowNametag",
           "craftAllowPatches",
           "craftAllowSeed",
@@ -113,7 +119,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function App() {
   const appProps = useTypedLoaderData<typeof loader>();
-  const { meta } = appProps.rules;
 
   return (
     <AppProvider {...appProps}>
@@ -126,10 +131,10 @@ export default function App() {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <Meta />
           <Links />
-          {getSeoLinks(meta).map((attributes, index) => (
+          {getSeoLinks(appProps.rules).map((attributes, index) => (
             <link key={index} {...attributes} />
           ))}
-          {getSeoMeta(meta).map((attributes, index) => (
+          {getSeoMeta(appProps.rules).map((attributes, index) => (
             <meta key={index} {...attributes} />
           ))}
         </head>

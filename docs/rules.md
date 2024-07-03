@@ -7,6 +7,42 @@ CS2 Inventory Simulator can be configured at runtime using rules. These rules ca
 
 ## Current rules
 
+### `appName`
+
+- Name of the app. If empty, uses Inventory Simulator's default value.
+- **Type:** `string`
+- **Default:** _Empty_
+
+### `appFooterName`
+
+- Name in the footer of the app. If empty, uses Inventory Simulator's default value.
+- **Type:** `string`
+- **Default:** _Empty_
+
+### `appLogoUrl`
+
+- URL of the app's logo. If empty, uses Inventory Simulator's logo. Server must be restarted if changed.
+- **Type:** `string`
+- **Default:** _Empty_
+
+### `appSeoDescription`
+
+- SEO description for the app. If empty, uses Inventory Simulator's default value.
+- **Type:** `string`
+- **Default:** _Empty_
+
+### `appSeoImageUrl`
+
+- SEO image for the app. If empty, uses Inventory Simulator's default value.
+- **Type:** `string`
+- **Default:** _Empty_
+
+### `appSeoTitle`
+
+- SEO title for the app. If empty, uses Inventory Simulator's default value.
+- **Type:** `string`
+- **Default:** _Empty_
+
 ### `appCountry`
 
 - Country of the application (ISO-3166-1 alpha-2 code). This will change the language of the application if it's available for the respective country (e.g. `br` uses `brazilian` translation).
