@@ -17,7 +17,7 @@ export function Footer() {
     <footer className="my-8 select-none text-sm text-neutral-400 drop-shadow-sm">
       <div className="text-center">
         <span>
-          &copy; 2017 - {new Date().getFullYear()}{" "}| Todos os direitos reservados </br>
+          &copy; 2017 - {new Date().getFullYear()}{" "}| Todos os direitos reservados<br/>
           {appFooterName || DEFAULT_APP_FOOTER_NAME}
         </span>
       </div>
