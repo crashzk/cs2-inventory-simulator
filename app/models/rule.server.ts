@@ -9,6 +9,7 @@ import { prisma } from "~/db.server";
 import { STEAM_API_KEY, STEAM_CALLBACK_URL } from "~/env.server";
 
 const booleanRulesNames = [
+  "appCacheInventory",
   "craftAllowNametag",
   "craftAllowPatches",
   "craftAllowSeed",
@@ -27,6 +28,7 @@ const booleanRulesNames = [
   "inventoryItemAllowInspectInGame",
   "inventoryItemAllowRemovePatch",
   "inventoryItemAllowScrapeSticker",
+  "inventoryItemAllowShare",
   "inventoryItemAllowUnlockContainer"
 ] as const;
 const numberRulesNames = [
@@ -426,6 +428,11 @@ export async function setupRules() {
     input: true
   });
   await addRule({
+    name: "inventoryItemAllowShare",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
     name: "inventoryItemEquipHideType",
     type: "string-array",
     input: []
@@ -437,6 +444,11 @@ export async function setupRules() {
   });
   await addRule({
     name: "inventoryItemAllowUnlockContainer",
+    type: "boolean",
+    input: true
+  });
+  await addRule({
+    name: "appCacheInventory",
     type: "boolean",
     input: true
   });

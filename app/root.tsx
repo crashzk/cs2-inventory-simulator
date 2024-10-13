@@ -68,6 +68,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     rules: {
       ...(await getRules(
         [
+          "appCacheInventory",
           "appFaviconMimeType",
           "appFaviconUrl",
           "appFooterName",
@@ -102,6 +103,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           "inventoryItemAllowInspectInGame",
           "inventoryItemAllowRemovePatch",
           "inventoryItemAllowScrapeSticker",
+          "inventoryItemAllowShare",
           "inventoryItemAllowUnlockContainer",
           "inventoryItemEquipHideModel",
           "inventoryItemEquipHideType",
