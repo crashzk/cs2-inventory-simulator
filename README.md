@@ -15,4 +15,3 @@
 - **Storage Units:** Organize and store items in Storage Units.
 - **API for Developers:** Fetch a user inventory and equipped items by using HTTP endpoints.
 - **Partial support for mobile devices**
-- 
