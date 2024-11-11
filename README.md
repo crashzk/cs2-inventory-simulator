@@ -1,6 +1,6 @@
 # [cs2.zkservidores.com](https://cs2.zkservidores.com)
 
-**ZK Servidores™ | Skin Changer** for players to choose their skins within our CS2 servers.
+**ZK Servidores™ | Skinchanger** for players to choose their skins within our CS2 servers.
 
 ##### Fork: [CS2 Inventory Simulator](https://github.com/ianlucas/cs2-inventory-simulator)
 
