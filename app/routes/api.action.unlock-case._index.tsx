@@ -9,10 +9,15 @@ import { z } from "zod";
 import { api } from "~/api.server";
 import { requireUser } from "~/auth.server";
 import { middleware } from "~/http.server";
-import { expectRule, getRule } from "~/models/rule.server";
+import {
+  inventoryItemAllowUnlockContainer,
+  inventoryMaxItems,
+  inventoryStorageUnitMaxItems
+} from "~/models/rule.server";
 import { updateUserInventory } from "~/models/user.server";
 import { conflict, methodNotAllowed } from "~/responses.server";
 import { parseInventory } from "~/utils/inventory";
+import { json } from "~/utils/misc";
 import { nonNegativeInt, positiveInt } from "~/utils/shapes";
 
 export const ApiActionUnlockCaseUrl = "/api/action/unlock-case";
@@ -32,7 +37,7 @@ export const action = api(async ({ request }: ActionFunctionArgs) => {
     inventory: rawInventory,
     syncedAt: currentSyncedAt
   } = await requireUser(request);
-  await expectRule("inventoryItemAllowUnlockContainer", true, userId);
+  await inventoryItemAllowUnlockContainer.for(userId).truthy();
   const { caseUid, keyUid, syncedAt } = z
     .object({
       syncedAt: positiveInt,
@@ -45,8 +50,8 @@ export const action = api(async ({ request }: ActionFunctionArgs) => {
   }
   const inventory = new CS2Inventory({
     data: parseInventory(rawInventory),
-    maxItems: await getRule("inventoryMaxItems", userId),
-    storageUnitMaxItems: await getRule("inventoryStorageUnitMaxItems", userId)
+    maxItems: await inventoryMaxItems.for(userId).get(),
+    storageUnitMaxItems: await inventoryStorageUnitMaxItems.for(userId).get()
   });
   const unlockedItem = inventory.get(caseUid).unlockContainer();
   inventory.unlockContainer(unlockedItem, caseUid, keyUid);
@@ -54,8 +59,8 @@ export const action = api(async ({ request }: ActionFunctionArgs) => {
     userId,
     inventory.stringify()
   );
-  return {
+  return json({
     unlockedItem,
     syncedAt: responseSyncedAt.getTime()
-  } satisfies ApiActionUnlockCaseActionData;
+  } satisfies ApiActionUnlockCaseActionData);
 });

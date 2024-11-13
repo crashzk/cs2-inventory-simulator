@@ -42,3 +42,10 @@ export function colorText(input: string) {
     return `<span style="color: ${color};">${text}</span>`;
   });
 }
+
+export function noop() {}
+
+export function json<T>(data: T, init?: ResponseInit) {
+  // todo: `Response.json` is not working for some reason.
+  return new Response(JSON.stringify(data), init);
+}
