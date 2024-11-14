@@ -1,55 +1,48 @@
 # Adapted from Remix's Indie Stack
-FROM node:18-bullseye-slim as base
+FROM node:18-bullseye-slim AS base
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
-# Install Prisma dependencies
-RUN apt-get update && apt-get install -y openssl
+# Install system dependencies
+RUN apt-get update && apt-get install -y openssl git
 
-# Install Inventory Simulator dependencies
-FROM base as deps
+# Install dependencies
+FROM base AS deps
 
 WORKDIR /myapp
-
-ADD package.json package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm install --include=dev
 
-# Setup production node_modules
-FROM base as production-deps
+# Generate Prisma client, add commit hash, and build the app
+FROM deps AS build
 
-WORKDIR /myapp
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT=${SOURCE_COMMIT}
 
-COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json package-lock.json ./
-RUN npm prune --omit=dev
-
-# Build the app
-FROM base as build
-
-WORKDIR /myapp
-
-COPY --from=deps /myapp/node_modules /myapp/node_modules
-
-ADD prisma .
+COPY prisma ./prisma
 RUN npx prisma generate
 
-ADD . .
+COPY . .
+RUN if [ -d .git ]; then \
+      git log -n 1 --pretty=format:%H > .build-last-commit; \
+    elif [ -n "$SOURCE_COMMIT" ] && [ "$SOURCE_COMMIT" != "unknown" ]; then \
+      echo "$SOURCE_COMMIT" > .build-last-commit; \
+    fi
 RUN npm run build
+RUN rm -rf .git
 
-# Finally, build the production image with minimal footprint
+# Production image with minimal footprint
 FROM base
-
-ENV NODE_ENV="production"
 
 WORKDIR /myapp
 
-COPY --from=production-deps /myapp/node_modules /myapp/node_modules
+COPY --from=deps /myapp/node_modules /myapp/node_modules
 COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
-
 COPY --from=build /myapp/build /myapp/build
 COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/start.sh /myapp/start.sh
 COPY --from=build /myapp/prisma /myapp/prisma
+COPY --from=build /myapp/.build-last-commit /myapp/.build-last-commit
 
 ENTRYPOINT [ "./start.sh" ]
