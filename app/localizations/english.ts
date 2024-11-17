@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------------------------
  *  Copyright (c) Ian Lucas. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
@@ -273,5 +273,5 @@ export const english = {
   SyncErrorContinue: "Try again",
   SyncErrorDesc: "An error occurred while syncing your changes.",
   SyncErrorTitle: "Sync Error",
-  SyncWarnText: "You are not authenticated, your changes will not by synchronized."
+  SyncWarnText: "You are not authenticated with your steam, your changes will not be synchronized on the servers."
 };

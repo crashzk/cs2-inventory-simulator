@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------------------------
  *  Copyright (c) Ian Lucas. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
@@ -239,5 +239,5 @@ export const brazilian = {
   SyncErrorContinue: "Tentar novamente",
   SyncErrorDesc: "Não foi possível sincronizar as suas mudanças.",
   SyncErrorTitle: "Erro de sincronização",
-  SyncWarnText: "Você não está autenticado, suas mudanças não serão sincronizadas."
+  SyncWarnText: "Você não está autenticado com sua steam, suas mudanças não serão sincronizadas nos servidores."
 };

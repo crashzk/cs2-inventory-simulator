@@ -232,5 +232,5 @@ export const portuguese = {
   SyncErrorContinue: "Tentar novamente",
   SyncErrorDesc: "Não foi possível sincronizar as suas mudanças.",
   SyncErrorTitle: "Erro de sincronização",
-  SyncWarnText: "Você não está autenticado, suas mudanças não serão sincronizadas."
+  SyncWarnText: "Você não está autenticado com sua steam, suas mudanças não serão sincronizadas nos servidores."
 };
