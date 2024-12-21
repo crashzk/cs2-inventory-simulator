@@ -17,7 +17,7 @@ export function Footer() {
     <footer className="my-8 select-none text-sm text-neutral-400 drop-shadow-sm">
       <div className="text-center">
         <span>
-          &copy; {new Date().getFullYear()}{" "}</br>
+          &copy; {new Date().getFullYear()}{" "}
           {appFooterName || DEFAULT_APP_FOOTER_NAME}
         </span>
       </div>
