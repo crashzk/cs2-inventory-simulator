@@ -17,7 +17,7 @@ RUN npm ci --include=dev
 FROM deps AS build
 
 ARG SOURCE_COMMIT
-ENV SOURCE_COMMIT=$something
+ENV SOURCE_COMMIT=something
 
 COPY prisma ./prisma
 RUN npx prisma generate
