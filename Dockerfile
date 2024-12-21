@@ -16,18 +16,18 @@ RUN npm ci --include=dev
 # Generate Prisma client, add commit hash, and build the app
 FROM deps AS build
 
-ARG SOURCE_COMMIT
-ENV SOURCE_COMMIT=something
+#ARG SOURCE_COMMIT
+#ENV SOURCE_COMMIT=${SOURCE_COMMIT}
 
 COPY prisma ./prisma
 RUN npx prisma generate
 
 COPY . .
-RUN [ -d .git ] && git log -n 1 --pretty=format:%H > .build-last-commit || \
-    [ -n "$SOURCE_COMMIT" ] && [ "$SOURCE_COMMIT" != "unknown" ] && \
-    echo "$SOURCE_COMMIT" > .build-last-commit
-RUN npm run build
-RUN rm -rf .git
+#RUN [ -d .git ] && git log -n 1 --pretty=format:%H > .build-last-commit || \
+    #[ -n "$SOURCE_COMMIT" ] && [ "$SOURCE_COMMIT" != "unknown" ] && \
+    #echo "$SOURCE_COMMIT" > .build-last-commit
+#RUN npm run build
+#RUN rm -rf .git
 
 # Production image with minimal footprint
 FROM base
