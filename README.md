@@ -1,9 +1,9 @@
 # [cs2.zkservidores.com](https://cs2.zkservidores.com)
 A Counter-Strike 2 **Inventory Simulator** for the web using TypeScript and Remix.
 
-<img src="https://raw.githubusercontent.com/ianlucas/cs2-inventory-simulator/main/screenshot1.png" alt="Inventory Simulator homepage" title="CS2 Inventory Simulator" />
+<img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/main/screenshot1.png" alt="Inventory Simulator homepage" title="CS2 Inventory Simulator" />
 
-<img src="https://raw.githubusercontent.com/ianlucas/cs2-inventory-simulator/main/screenshot2.png" alt="Inventory Simulator case opening" title="CS2 Inventory Simulator" />
+<img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/main/screenshot2.png" alt="Inventory Simulator case opening" title="CS2 Inventory Simulator" />
 
 ## Features
 - **Authentication is optional:** Most features work without authentication.
