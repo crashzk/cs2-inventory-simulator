@@ -240,5 +240,5 @@ export const brazilian = {
   SyncErrorContinue: "Tentar novamente",
   SyncErrorDesc: "Não foi possível sincronizar as suas mudanças.",
   SyncErrorTitle: "Erro de sincronização",
-  SyncWarnText: "Você não está autenticado, suas mudanças não serão sincronizadas."
+  SyncWarnText: "Você não está logado com a steam, suas escolhas de skins não serão sincronizadas com nossos servidores."
 };

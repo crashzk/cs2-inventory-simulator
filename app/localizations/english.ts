@@ -274,5 +274,5 @@ export const english = {
   SyncErrorContinue: "Try again",
   SyncErrorDesc: "An error occurred while syncing your changes.",
   SyncErrorTitle: "Sync Error",
-  SyncWarnText: "You are not authenticated, your changes will not by synchronized."
+  SyncWarnText: "You are not logged in to steam, your skin choices will not be synced with our servers."
 };
