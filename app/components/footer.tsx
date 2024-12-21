@@ -19,6 +19,8 @@ export function Footer() {
         <span>
         {appFooterName || DEFAULT_APP_FOOTER_NAME}
         </span>
+      </div>
+      <div className="text-center">
         <span>          
         &copy; Todos os direitos reservados | 2017 - {new Date().getFullYear()}{" "}
         </span>		
