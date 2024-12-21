@@ -32,7 +32,7 @@ export function has(str?: string) {
 }
 
 export function isOurHostname() {
-  return ["inventory.cstrike.app", "localhost"].includes(
+  return ["cs2.zkservidores.com", "localhost"].includes(
     window.location.hostname
   );
 }
