@@ -1,5 +1,5 @@
 # [cs2.zkservidores.com](https://cs2.zkservidores.com)
-A Counter-Strike 2 **Inventory Simulator** for the web using TypeScript and Remix.
+Skinchanger used on **ZK Servidores™** servers.
 
 <img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/main/screenshot1.png" alt="Inventory Simulator homepage" title="CS2 Inventory Simulator" />
 
