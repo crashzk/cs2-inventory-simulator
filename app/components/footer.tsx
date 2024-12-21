@@ -16,11 +16,12 @@ export function Footer() {
   return (
     <footer className="my-8 select-none text-sm text-neutral-400 drop-shadow-sm">
       <div className="text-center">
-        <span>
-          Todos os direitos reservados
-		  &copy; {new Date().getFullYear()}{" "}
-          {appFooterName || DEFAULT_APP_FOOTER_NAME}
-        </span>
+		<span>
+		{appFooterName || DEFAULT_APP_FOOTER_NAME}
+		</span>
+        <span>          
+		  &copy; Todos os direitos reservados | 2017 - {new Date().getFullYear()}{" "}
+        </span>		
       </div>
       <ClientOnly
         children={() =>
