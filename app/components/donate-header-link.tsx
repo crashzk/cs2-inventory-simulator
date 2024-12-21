@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { isOurHostname } from "~/utils/misc";
 import { useLocalize } from "./app-context";
 import { HeaderLink } from "./header-link";
@@ -17,7 +17,7 @@ export function DonateHeaderLink() {
     isOurHostname() && (
       <HeaderLink
         className="font-bold"
-        icon={faHeart}
+        icon={faStar}
         label={localize("HeaderDonate")}
         target="_blank"
         to="https://vip.zkservidores.com"
