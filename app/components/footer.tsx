@@ -48,14 +48,6 @@ export function Footer() {
             </div>
           ) : (
             <div className="text-center text-[10px]">
-              powered by{" "}
-              <a
-                href="https://github.com/ianlucas/cs2-inventory-simulator"
-                className="underline hover:text-blue-500"
-                target="_blank"
-              >
-                Inventory Simulator
-              </a>
             </div>
           )
         }
