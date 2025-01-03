@@ -274,6 +274,12 @@ export const craftHideType = new Rule({
   defaultValue: [] as string[]
 });
 
+export const craftHideFilterType = new Rule({
+  name: "craftHideFilterType",
+  type: "string-array",
+  defaultValue: [] as string[]
+});
+
 export const craftHideModel = new Rule({
   name: "craftHideModel",
   type: "string-array",
@@ -398,6 +404,12 @@ export const craftAllowPatches = new Rule({
   name: "craftAllowPatches",
   type: "boolean",
   defaultValue: true
+});
+
+export const craftMaxQuantity = new Rule({
+  name: "craftMaxQuantity",
+  type: "number",
+  defaultValue: 0
 });
 
 export const editAllowNametag = new Rule({

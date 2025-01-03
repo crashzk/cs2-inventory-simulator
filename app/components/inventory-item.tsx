@@ -30,7 +30,7 @@ import { useInventory, useLocalize, useRules, useUser } from "./app-context";
 import { InventoryItemContextMenu } from "./inventory-item-context-menu";
 import { InventoryItemTile } from "./inventory-item-tile";
 import { InventoryItemTooltip } from "./inventory-item-tooltip";
-import { alert } from "./modal-generic";
+import { alert, confirm } from "./modal-generic";
 
 export function InventoryItem({
   disableContextMenu,
@@ -225,15 +225,16 @@ export function InventoryItem({
                     label: localize("InventoryItemInspectInGame"),
                     onClick: ({ setClickLabel }) => {
                       const inspectLink = generateInspectLink(item);
-                      if (isCommandInspect(inspectLink)) {
-                        copyToClipboard(inspectLink);
-                        return setClickLabel(
-                          localize("InventoryItemInspectCopied")
-                        );
-                      }
-                      close(() => {
+                      const isCommand = isCommandInspect(inspectLink);
+                      copyToClipboard(inspectLink);
+                      if (!isCommand) {
                         window.location.assign(inspectLink);
-                      });
+                      }
+                      return setClickLabel(
+                        isCommand
+                          ? localize("InventoryItemInspectCopied")
+                          : localize("InventoryItemInspectURLCopied")
+                      );
                     }
                   }
                 ],
@@ -385,7 +386,18 @@ export function InventoryItem({
                   {
                     condition: true,
                     label: localize("InventoryItemDelete"),
-                    onClick: close(() => onRemove?.(uid))
+                    onClick: close(async () => {
+                      if (
+                        await confirm({
+                          titleText: item.name,
+                          bodyText: localize("InventoryItemDeleteConfirmDesc"),
+                          cancelText: localize("GenericCancel"),
+                          confirmText: localize("InventoryItemDeleteConfirm")
+                        })
+                      ) {
+                        onRemove?.(uid);
+                      }
+                    })
                   }
                 ]
               ]}
