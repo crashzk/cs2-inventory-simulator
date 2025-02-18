@@ -9,7 +9,7 @@ import { isOurHostname } from "~/utils/misc";
 import { useRules } from "./app-context";
 
 export function Footer() {
-  const { buildLastCommit, appFooterName } = useRules();
+  const { sourceCommit, appFooterName } = useRules();
 
   return (
     <footer className="my-8 text-sm text-neutral-400 drop-shadow-xs select-none">
