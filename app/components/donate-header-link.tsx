@@ -20,7 +20,7 @@ export function DonateHeaderLink() {
         icon={faStar}
         label={translate("HeaderDonate")}
         target="_blank"
-        to="https://vip.zkservidores.com"
+        to="https://zkservidores.com/shop"
       />
     )
   );
