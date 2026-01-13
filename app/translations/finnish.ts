@@ -82,7 +82,7 @@ export const finnish = {
   HeaderCraftCannotCraft: "Et voi valmistaa.",
   HeaderCraftInventoryFull: "Varusteluettelosi on täynnä.",
   HeaderCraftLabel: "Valmista esine",
-  HeaderDonate: "Lahjoita",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Varusteluettelo",
   HeaderSettingsLabel: "Asetukset",
   HeaderSignInLabel: "Kirjaudu synkronoidaksesi",

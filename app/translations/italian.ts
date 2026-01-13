@@ -82,7 +82,7 @@ export const italian = {
   HeaderCraftCannotCraft: "Non puoi creare.",
   HeaderCraftInventoryFull: "Il tuo inventario è pieno.",
   HeaderCraftLabel: "Crea oggetto",
-  HeaderDonate: "Dona",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventario",
   HeaderSettingsLabel: "Impostazioni",
   HeaderSignInLabel: "Accedi per sincronizzare",

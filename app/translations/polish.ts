@@ -82,7 +82,7 @@ export const polish = {
   HeaderCraftCannotCraft: "Nie możesz tworzyć.",
   HeaderCraftInventoryFull: "Twój ekwipunek jest pełny.",
   HeaderCraftLabel: "Stwórz przedmiot",
-  HeaderDonate: "Wspomóż",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Ekwipunek",
   HeaderSettingsLabel: "Ustawienia",
   HeaderSignInLabel: "Zaloguj się, aby synchronizować",

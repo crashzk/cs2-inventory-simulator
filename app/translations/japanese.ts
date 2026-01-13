@@ -82,7 +82,7 @@ export const japanese = {
   HeaderCraftCannotCraft: "クラフトできません。",
   HeaderCraftInventoryFull: "インベントリがいっぱいです。",
   HeaderCraftLabel: "アイテムをクラフト",
-  HeaderDonate: "寄付",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "インベントリ",
   HeaderSettingsLabel: "設定",
   HeaderSignInLabel: "同期するにはサインイン",

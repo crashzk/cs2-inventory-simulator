@@ -82,7 +82,7 @@ export const koreana = {
   HeaderCraftCannotCraft: "제작할 수 없습니다.",
   HeaderCraftInventoryFull: "보관함이 가득 찼습니다.",
   HeaderCraftLabel: "아이템 제작",
-  HeaderDonate: "기부",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "보관함",
   HeaderSettingsLabel: "설정",
   HeaderSignInLabel: "동기화를 위해 로그인",

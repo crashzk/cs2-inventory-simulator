@@ -82,7 +82,7 @@ export const german = {
   HeaderCraftCannotCraft: "Sie können nicht herstellen.",
   HeaderCraftInventoryFull: "Ihr Inventar ist voll.",
   HeaderCraftLabel: "Gegenstand herstellen",
-  HeaderDonate: "Spenden",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventar",
   HeaderSettingsLabel: "Einstellungen",
   HeaderSignInLabel: "Anmelden zum Synchronisieren",

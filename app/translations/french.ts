@@ -82,7 +82,7 @@ export const french = {
   HeaderCraftCannotCraft: "Vous ne pouvez pas créer.",
   HeaderCraftInventoryFull: "Votre inventaire est plein.",
   HeaderCraftLabel: "Créer un objet",
-  HeaderDonate: "Faire un don",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventaire",
   HeaderSettingsLabel: "Paramètres",
   HeaderSignInLabel: "Se connecter pour synchroniser",

@@ -82,7 +82,7 @@ export const bulgarian = {
   HeaderCraftCannotCraft: "Не можете да изработвате.",
   HeaderCraftInventoryFull: "Вашият инвентар е пълен.",
   HeaderCraftLabel: "Изработка на артикул",
-  HeaderDonate: "Дарение",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Инвентар",
   HeaderSettingsLabel: "Настройки",
   HeaderSignInLabel: "Влезте за синхронизация",

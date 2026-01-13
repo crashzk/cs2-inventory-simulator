@@ -82,7 +82,7 @@ export const czech = {
   HeaderCraftCannotCraft: "Nemůžeš vytvářet.",
   HeaderCraftInventoryFull: "Tvůj inventář je plný.",
   HeaderCraftLabel: "Vytvořit předmět",
-  HeaderDonate: "Přispět",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventář",
   HeaderSettingsLabel: "Nastavení",
   HeaderSignInLabel: "Přihlásit se k synchronizaci",

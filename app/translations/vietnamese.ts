@@ -82,7 +82,7 @@ export const vietnamese = {
   HeaderCraftCannotCraft: "Bạn không thể chế tạo vật phẩm.",
   HeaderCraftInventoryFull: "Kho đồ đã đầy.",
   HeaderCraftLabel: "Chế tạo vật phẩm",
-  HeaderDonate: "Quyên góp",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Kho đồ",
   HeaderSettingsLabel: "Cài đặt",
   HeaderSignInLabel: "Đăng nhập",

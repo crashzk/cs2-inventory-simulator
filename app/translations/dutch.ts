@@ -82,7 +82,7 @@ export const dutch = {
   HeaderCraftCannotCraft: "Je kunt niet maken.",
   HeaderCraftInventoryFull: "Je inventaris is vol.",
   HeaderCraftLabel: "Voorwerp maken",
-  HeaderDonate: "Doneren",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventaris",
   HeaderSettingsLabel: "Instellingen",
   HeaderSignInLabel: "Inloggen om te synchroniseren",

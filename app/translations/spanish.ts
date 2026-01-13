@@ -82,7 +82,7 @@ export const spanish = {
   HeaderCraftCannotCraft: "No puedes crear objetos.",
   HeaderCraftInventoryFull: "El inventario está lleno.",
   HeaderCraftLabel: "Crear objetos",
-  HeaderDonate: "Donar",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventario",
   HeaderSettingsLabel: "Ajustes",
   HeaderSignInLabel: "Iniciar sesión",

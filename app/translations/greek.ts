@@ -82,7 +82,7 @@ export const greek = {
   HeaderCraftCannotCraft: "Δεν μπορείτε να κατασκευάσετε.",
   HeaderCraftInventoryFull: "Η λίστα αντικειμένων σας είναι γεμάτη.",
   HeaderCraftLabel: "Κατασκευή αντικειμένου",
-  HeaderDonate: "Δωρεά",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Λίστα αντικειμένων",
   HeaderSettingsLabel: "Ρυθμίσεις",
   HeaderSignInLabel: "Σύνδεση για συγχρονισμό",

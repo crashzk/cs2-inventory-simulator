@@ -82,7 +82,7 @@ export const schinese = {
   HeaderCraftCannotCraft: "您无法制作物品。",
   HeaderCraftInventoryFull: "库存已满。",
   HeaderCraftLabel: "制作物品",
-  HeaderDonate: "捐赠",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "库存",
   HeaderSettingsLabel: "设置",
   HeaderSignInLabel: "登录",

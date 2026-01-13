@@ -82,7 +82,7 @@ export const swedish = {
   HeaderCraftCannotCraft: "Du kan inte skapa föremål.",
   HeaderCraftInventoryFull: "Inventariet är fullt.",
   HeaderCraftLabel: "Skapa föremål",
-  HeaderDonate: "Donera",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "Inventarium",
   HeaderSettingsLabel: "Inställningar",
   HeaderSignInLabel: "Logga in",

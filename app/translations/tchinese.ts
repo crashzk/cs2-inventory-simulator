@@ -82,7 +82,7 @@ export const tchinese = {
   HeaderCraftCannotCraft: "您無法製作物品。",
   HeaderCraftInventoryFull: "庫存已滿。",
   HeaderCraftLabel: "製作物品",
-  HeaderDonate: "捐贈",
+  HeaderDonate: "Get VIP",
   HeaderInventoryLabel: "庫存",
   HeaderSettingsLabel: "設定",
   HeaderSignInLabel: "登入",
