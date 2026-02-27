@@ -109,13 +109,13 @@ export function PatchPicker({
                 </div>
               )}
               {!disabled && (
-                <div className="absolute top-0 left-0 h-full w-full border-2 border-transparent hover:border-blue-500/50" />
+                <div className="absolute top-0 left-0 size-full border-2 border-transparent hover:border-blue-500/50" />
               )}
             </button>
           );
         })}
       </div>
-      <Modal className="w-[540px] pb-1" hidden={activeIndex === undefined} blur>
+      <Modal className="w-135 pb-1" hidden={activeIndex === undefined} blur>
         <ModalHeader
           title={translate("PatchPickerHeader")}
           onClose={handleCloseModal}

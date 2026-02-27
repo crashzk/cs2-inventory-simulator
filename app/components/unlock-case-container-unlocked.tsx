@@ -44,7 +44,7 @@ export function UnlockCaseContainerUnlocked({
   const item = CS2Economy.getById(id);
 
   return (
-    <div className="flex h-full w-full items-center justify-center text-center drop-shadow-sm">
+    <div className="flex size-full items-center justify-center text-center drop-shadow-sm">
       <div>
         <div className="px-4 text-2xl">
           <span
@@ -59,14 +59,14 @@ export function UnlockCaseContainerUnlocked({
           <span>{nameItemString(caseItem)}</span>
         </div>
         <ItemImage
-          className="m-auto my-4 max-w-[512px] [transition:all_cubic-bezier(0.4,0,0.2,1)_250ms]"
+          className="m-auto my-4 max-w-lg [transition:all_cubic-bezier(0.4,0,0.2,1)_250ms]"
           item={item}
           style={{ transform: `scale(${revealScale})` }}
           onLoad={handleLoad}
           wear={attributes.wear}
         />
         <UseItemFooter
-          className="lg:min-w-[1024px]"
+          className="lg:min-w-5xl"
           left={
             <div className="flex items-center gap-8">
               <UnlockCaseAttribute
