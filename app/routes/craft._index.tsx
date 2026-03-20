@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownLong } from "@fortawesome/free-solid-svg-icons";
 import { CS2BaseInventoryItem, CS2EconomyItem } from "@ianlucas/cs2-lib";
 import clsx from "clsx";
 import lzstring from "lz-string";
@@ -23,7 +23,7 @@ import { ItemEditorAttributes } from "~/components/item-editor";
 import { ItemPicker } from "~/components/item-picker";
 import { Modal, ModalHeader, ModalNav } from "~/components/modal";
 import { SyncAction } from "~/data/sync";
-import { middleware } from "~/http.server";
+import { middleware } from "~/middleware.server";
 import { getUserBasicData } from "~/models/user.server";
 import { getMetaTitle } from "~/root-meta";
 import { isItemCountable } from "~/utils/economy";
@@ -191,7 +191,7 @@ export default function Craft() {
           <ModalNav
             items={[
               craftAllowImportInspectLink && {
-                icon: faLink,
+                icon: faArrowDownLong,
                 isActive: isImportFromInspectLink,
                 label: translate("CraftImportNavLabel"),
                 onClick: handleImportFromInspectLinkOpen

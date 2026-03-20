@@ -5,6 +5,7 @@
 
 import { CS2BaseInventoryItem, CS2Economy } from "@ianlucas/cs2-lib";
 import { z, ZodObject } from "zod";
+import { baseStickerSlabId } from "./economy";
 import { baseInventoryItemProps, nonNegativeInt } from "./shapes";
 
 const clientInventoryItemProps = {
@@ -23,22 +24,27 @@ const syncInventoryItemProps = {
     .optional()
 };
 
-function legit({
+function allowed({
   id,
   nameTag,
-  stickers
-}: {
-  id: number;
-  nameTag?: string;
-  stickers?: CS2BaseInventoryItem["stickers"];
-}) {
-  // Free items can be stored if they have a nametag or stickers
+  stickers,
+  keychains
+}: Pick<CS2BaseInventoryItem, "id" | "nameTag" | "stickers" | "keychains">) {
+  // Free items can be stored if they have a nametag or stickers or keychains
   if (
     CS2Economy.getById(id).free &&
     nameTag === undefined &&
-    stickers === undefined
+    stickers === undefined &&
+    keychains === undefined
   ) {
     return false;
+  }
+  if (keychains !== undefined) {
+    for (const { id } of Object.values(keychains)) {
+      if (id === baseStickerSlabId) {
+        return false;
+      }
+    }
   }
   return true;
 }
@@ -46,12 +52,12 @@ function legit({
 function refine(
   inventoryItem: z.infer<ZodObject<typeof syncInventoryItemProps>>
 ) {
-  if (!legit(inventoryItem)) {
+  if (!allowed(inventoryItem)) {
     return false;
   }
   if (inventoryItem.storage !== undefined) {
     for (const item of Object.values(inventoryItem.storage)) {
-      if (!legit(item)) {
+      if (!allowed(item)) {
         return false;
       }
     }
