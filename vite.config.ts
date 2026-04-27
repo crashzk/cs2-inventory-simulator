@@ -4,19 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
 import { createHash } from "crypto";
 import { readdirSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { minify_sync } from "terser";
 import ts from "typescript";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   server: {
     port: 3000
   },
-  plugins: [!process.env.VITEST && reactRouter(), tsconfigPaths()],
+  resolve: {
+    tsconfigPaths: true
+  },
+  plugins: [tailwindcss(), !process.env.VITEST && reactRouter()],
   define: {
     __SPLASH_SCRIPT__: JSON.stringify(
       minify_sync(
