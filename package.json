@@ -20,7 +20,7 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
-    "@ianlucas/cs2-lib": "^7.33.1",
+    "@ianlucas/cs2-lib": "^7.34.0",
     "@ianlucas/cs2-lib-inspect": "^5.5.2",
     "@ianlucas/remix-auth-steam": "^7.0.0",
     "@prisma/adapter-pg": "^7.8.0",
@@ -43,7 +43,7 @@
     "remix-utils": "^9.3.1",
     "steamapi": "^3.1.5",
     "tsx": "^4.21.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
