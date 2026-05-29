@@ -24,6 +24,9 @@ export function has(str?: string) {
 }
 
 export function isOurHostname() {
+  if (typeof window === "undefined") {
+    return false;
+  }
   return ["cs2.zkservidores.com", "localhost"].includes(
     window.location.hostname
   );
