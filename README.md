@@ -1,9 +1,7 @@
 ﻿# [cs2.zkservidores.com](https://cs2.zkservidores.com)
 **Skinchanger** used on **ZK Servidores™** servers.
 
-<img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/refs/heads/main/screenshot1.png" alt="Inventory Simulator Homepage" title="CS2 Inventory Simulator" />
-
-<img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/refs/heads/main/screenshot2.png" alt="Inventory Simulator case opening" title="CS2 Inventory Simulator" />
+<img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/refs/heads/main/screenshot1.png" alt="Skinchanger Homepage" title="Skinchanger ZK Servidores™" />
 
 ## Features
 - **Steam Authentication:** Enables Steam players to sync their inventories.
