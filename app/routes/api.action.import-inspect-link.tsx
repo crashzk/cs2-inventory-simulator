@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  CS2_STICKER_OFFSET_FACTOR,
   CS2BaseInventoryItem,
   CS2Economy,
-  truncateToFactor
+  repairInventoryItem
 } from "@ianlucas/cs2-lib";
 import {
   isSteamInspectLink,
@@ -20,43 +19,35 @@ import { getUserIdFromRequest } from "~/auth.server";
 import { usePostFetcher } from "~/components/hooks/use-post-fetcher";
 import { fetchCSFloatItemInfo } from "~/csfloat.server";
 import { middleware } from "~/middleware.server";
-import { craftAllowImportInspectLink } from "~/models/rule.server";
+import {
+  craftAllowImportInspectLink,
+  inventoryItemMaxPatches,
+  inventoryItemMaxStickers
+} from "~/models/rule.server";
 import {
   badRequest,
+  forbidden,
   methodNotAllowed,
   tooManyRequests
 } from "~/responses.server";
-import { isValidInspectLink, keychainOffsetFactor } from "~/utils/economy";
+import { isValidInspectLink } from "~/utils/economy";
 import { RateLimiter } from "~/utils/rate-limiter.server";
 import type { Route } from "./+types/api.action.import-inspect-link";
 
 const rateLimiter = new RateLimiter(1000);
 
-function postParseInventoryItem(item: CS2BaseInventoryItem) {
-  if (item.keychains !== undefined) {
-    for (const keychain of Object.values(item.keychains)) {
-      if (keychain.x !== undefined) {
-        keychain.x = truncateToFactor(keychain.x, keychainOffsetFactor);
-      }
-      if (keychain.y !== undefined) {
-        keychain.y = truncateToFactor(keychain.y, keychainOffsetFactor);
-      }
-      if (keychain.z !== undefined) {
-        keychain.z = truncateToFactor(keychain.z, keychainOffsetFactor);
-      }
-    }
+async function enforceMaxAttachments(
+  item: CS2BaseInventoryItem,
+  userId: string
+) {
+  if (
+    Object.keys(item.patches ?? {}).length >
+      (await inventoryItemMaxPatches.for(userId).get()) ||
+    Object.keys(item.stickers ?? {}).length >
+      (await inventoryItemMaxStickers.for(userId).get())
+  ) {
+    throw forbidden;
   }
-  if (item.stickers !== undefined) {
-    for (const sticker of Object.values(item.stickers)) {
-      if (sticker.x !== undefined) {
-        sticker.x = truncateToFactor(sticker.x, CS2_STICKER_OFFSET_FACTOR);
-      }
-      if (sticker.y !== undefined) {
-        sticker.y = truncateToFactor(sticker.y, CS2_STICKER_OFFSET_FACTOR);
-      }
-    }
-  }
-  return item;
 }
 
 export const action = api(async ({ request }: Route.ActionArgs) => {
@@ -80,16 +71,24 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
       inspectLink: z.string().refine((value) => isValidInspectLink(value))
     })
     .parse(await request.json());
+  let item: CS2BaseInventoryItem;
   if (isSteamInspectLink(inspectLink)) {
-    return postParseInventoryItem(
-      parseCSFloatItemInfo(CS2Economy, await fetchCSFloatItemInfo(inspectLink))
+    item = parseCSFloatItemInfo(
+      CS2Economy,
+      await fetchCSFloatItemInfo(inspectLink)
     );
+  } else {
+    try {
+      item = parseInspectLink(CS2Economy, inspectLink);
+    } catch {
+      throw badRequest;
+    }
   }
-  try {
-    return postParseInventoryItem(parseInspectLink(CS2Economy, inspectLink));
-  } catch {
+  if (!repairInventoryItem(CS2Economy, item)) {
     throw badRequest;
   }
+  await enforceMaxAttachments(item, userId);
+  return item;
 });
 
 export { loader } from "./api.$";

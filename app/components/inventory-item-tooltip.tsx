@@ -14,7 +14,7 @@ import { ComponentProps } from "react";
 import { has } from "~/utils/misc";
 import { usePreferences } from "./app-context";
 import { InventoryItemTooltipContents } from "./inventory-item-tooltip-contents";
-import { InventoryItemTooltipDescription } from "./inventory-item-tooltip-description";
+import { ItemDescription } from "./item-description";
 import { InventoryItemTooltipExterior } from "./inventory-item-tooltip-exterior";
 import { InventoryItemTooltipName } from "./inventory-item-tooltip-name";
 import { InventoryItemTooltipRarity } from "./inventory-item-tooltip-rarity";
@@ -38,8 +38,8 @@ export function InventoryItemTooltip({
       ? CS2Economy.getById(item.containerId)
       : item;
   const hasContents = containerItem.isContainer();
-  const hasWear = !item.free && item.hasWear();
-  const hasSeed = !item.free && item.hasSeed();
+  const hasWear = !item.isDefault && item.hasWear();
+  const hasSeed = !item.isDefault && item.hasSeed();
   const hasAttributes = hasWear || hasSeed;
   const hasStatTrak = item.statTrak !== undefined;
   const wear = item.getWear();
@@ -67,8 +67,8 @@ export function InventoryItemTooltip({
         {hasWear && <InventoryItemTooltipExterior wear={wear} />}
         {hasTeams && <InventoryItemTooltipTeams teams={teams} />}
       </div>
-      {has(item.tournamentDesc) && (
-        <p className="mt-4 text-yellow-300">{item.tournamentDesc}</p>
+      {has(item.tournamentDescription) && (
+        <p className="mt-4 text-yellow-300">{item.tournamentDescription}</p>
       )}
       {hasStatTrak && (
         <InventoryItemTooltipStatTrak
@@ -76,7 +76,7 @@ export function InventoryItemTooltip({
           statTrak={item.statTrak}
         />
       )}
-      <InventoryItemTooltipDescription item={item} />
+      <ItemDescription item={item} />
       {hasContents && (
         <InventoryItemTooltipContents
           containerItem={containerItem}

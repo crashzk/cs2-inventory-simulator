@@ -7,6 +7,7 @@ import { CS2EconomyItem, CS2ItemType } from "@ianlucas/cs2-lib";
 import { useState } from "react";
 import { toArrayIf } from "~/utils/misc";
 import { useInventory, useRules, useTranslate } from "./app-context";
+import { useCraftItemFilter } from "./hooks/use-item-hide-filters";
 import { ItemEditor, ItemEditorAttributes } from "./item-editor";
 import { ModalButton } from "./modal-button";
 
@@ -37,15 +38,16 @@ export function CraftNew({
     craftAllowStickerX,
     craftAllowStickerY,
     craftAllowWear,
-    craftHideCategory,
-    craftHideId,
     craftHideType,
     craftMaxQuantity,
+    inventoryItemMaxPatches,
+    inventoryItemMaxStickers,
     inventoryMaxItems
   } = useRules();
 
   const [inventory] = useInventory();
   const [attributes, setAttributes] = useState<ItemEditorAttributes>();
+  const filterStickerOrPatch = useCraftItemFilter();
 
   const inventoryMaxQuantity = inventoryMaxItems - inventory.size();
   const maxQuantity = Math.min(
@@ -68,10 +70,14 @@ export function CraftNew({
   const isHideKeychainZ = !craftAllowKeychainZ;
 
   const isHidePatches =
-    !craftAllowPatches || craftHideType.includes(CS2ItemType.Patch);
+    !craftAllowPatches ||
+    craftHideType.includes(CS2ItemType.Patch) ||
+    inventoryItemMaxPatches === 0;
 
   const isHideStickers =
-    !craftAllowStickers || craftHideType.includes(CS2ItemType.Sticker);
+    !craftAllowStickers ||
+    craftHideType.includes(CS2ItemType.Sticker) ||
+    inventoryItemMaxStickers === 0;
 
   const isHideKeychains =
     !craftAllowKeychains || craftHideType.includes(CS2ItemType.Keychain);
@@ -80,19 +86,6 @@ export function CraftNew({
     if (attributes !== undefined) {
       onSubmit(attributes);
     }
-  }
-
-  function filterStickerOrPatch(item: CS2EconomyItem) {
-    if (craftHideId.includes(item.id)) {
-      return false;
-    }
-    if (
-      item.category !== undefined &&
-      craftHideCategory.includes(item.category)
-    ) {
-      return false;
-    }
-    return true;
   }
 
   return (

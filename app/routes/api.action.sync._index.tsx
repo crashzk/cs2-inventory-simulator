@@ -4,9 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
+  assert,
   CS2BaseInventoryItem,
   CS2Economy,
   CS2EconomyItem,
+  CS2InventoryItem,
   CS2ItemType,
   RecordValue
 } from "@ianlucas/cs2-lib";
@@ -60,19 +62,16 @@ import {
   inventoryItemAllowEdit,
   inventoryItemAllowRemovePatch,
   inventoryItemAllowRemoveSticker,
-  inventoryItemAllowScrapeSticker
+  inventoryItemAllowScrapeSticker,
+  inventoryItemMaxPatches,
+  inventoryItemMaxStickers
 } from "~/models/rule.server";
 import { manipulateUserInventory } from "~/models/user.server";
 import { methodNotAllowed } from "~/responses.server";
+import { isAttachmentCountAllowed } from "~/utils/attachments";
 import { editInventoryItem } from "~/utils/inventory";
 import { hasKeys } from "~/utils/misc";
-import {
-  nonNegativeInt,
-  optionalStickerOffset,
-  optionalStickerRotation,
-  optionalStickerWear,
-  teamShape
-} from "~/utils/shapes";
+import { nonNegativeInt, optionalNumber, teamShape } from "~/utils/shapes";
 import {
   clientInventoryItemShape,
   itemEditorAttributesShape,
@@ -80,12 +79,18 @@ import {
 } from "~/utils/shapes.server";
 import type { Route } from "./+types/api.action.sync._index";
 
+const keychainPlacementShape = {
+  x: optionalNumber,
+  y: optionalNumber,
+  z: optionalNumber
+};
+
 const stickerPlacementShape = {
   schema: nonNegativeInt,
-  x: optionalStickerOffset,
-  y: optionalStickerOffset,
-  rotation: optionalStickerRotation,
-  wear: optionalStickerWear
+  x: optionalNumber,
+  y: optionalNumber,
+  rotation: optionalNumber,
+  wear: optionalNumber
 };
 
 const actionShape = z.discriminatedUnion("type", [
@@ -102,6 +107,12 @@ const actionShape = z.discriminatedUnion("type", [
     toolUid: nonNegativeInt,
     itemId: nonNegativeInt,
     nameTag: z.string()
+  }),
+  z.object({
+    type: z.literal(SyncAction.ApplyItemKeychain),
+    keychainUid: nonNegativeInt,
+    targetUid: nonNegativeInt,
+    ...keychainPlacementShape
   }),
   z.object({
     type: z.literal(SyncAction.ApplyItemPatch),
@@ -149,7 +160,16 @@ const actionShape = z.discriminatedUnion("type", [
     type: z.literal(SyncAction.ScrapeItemSticker),
     targetUid: nonNegativeInt,
     index: nonNegativeInt,
-    wear: optionalStickerWear
+    wear: optionalNumber
+  }),
+  z.object({
+    type: z.literal(SyncAction.ExtractItemSticker),
+    uid: nonNegativeInt
+  }),
+  z.object({
+    type: z.literal(SyncAction.SealItemSticker),
+    toolUid: nonNegativeInt,
+    stickerUid: nonNegativeInt
   }),
   z.object({
     type: z.literal(SyncAction.SwapItemsStatTrak),
@@ -178,6 +198,12 @@ const actionShape = z.discriminatedUnion("type", [
     attributes: itemEditorAttributesShape
   }),
   z.object({
+    type: z.literal(SyncAction.AddWithKeychain),
+    itemId: nonNegativeInt,
+    keychainUid: nonNegativeInt,
+    ...keychainPlacementShape
+  }),
+  z.object({
     type: z.literal(SyncAction.AddWithSticker),
     itemId: nonNegativeInt,
     stickerUid: nonNegativeInt,
@@ -185,6 +211,15 @@ const actionShape = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(SyncAction.RemoveAllItems)
+  }),
+  z.object({
+    type: z.literal(SyncAction.UnpackItem),
+    uid: nonNegativeInt
+  }),
+  z.object({
+    type: z.literal(SyncAction.RemoveItemKeychain),
+    targetUid: nonNegativeInt,
+    slot: nonNegativeInt
   })
 ]);
 
@@ -194,20 +229,65 @@ export type ApiActionSyncData = {
   syncedAt: number;
 };
 
-async function enforceCraftRulesForItem(
-  idOrItem: number | CS2EconomyItem,
-  userId: string
+async function enforceMaxAttachments(
+  {
+    patches,
+    stickers
+  }: Pick<Partial<CS2BaseInventoryItem>, "patches" | "stickers">,
+  userId: string,
+  target?: CS2InventoryItem
 ) {
-  const { category, type, model, id } = CS2Economy.get(idOrItem);
-  await craftHideId.for(userId).notContains(id);
-  if (category !== undefined) {
-    await craftHideCategory.for(userId).notContains(category);
+  assert(
+    isAttachmentCountAllowed({
+      current: target?.getPatchesCount() ?? 0,
+      max: await inventoryItemMaxPatches.for(userId).get(),
+      next: patches !== undefined ? Object.keys(patches).length : 0
+    })
+  );
+  assert(
+    isAttachmentCountAllowed({
+      current: target?.getStickersCount() ?? 0,
+      max: await inventoryItemMaxStickers.for(userId).get(),
+      next: stickers !== undefined ? Object.keys(stickers).length : 0
+    })
+  );
+}
+
+const craftHideRules = {
+  hideId: craftHideId,
+  hideCategory: craftHideCategory,
+  hideType: craftHideType,
+  hideModel: craftHideModel
+};
+
+const editHideRules = {
+  hideId: editHideId,
+  hideCategory: editHideCategory,
+  hideType: editHideType,
+  hideModel: editHideModel
+};
+
+async function enforceItemHideRules(
+  idOrItem: number | CS2EconomyItem,
+  userId: string,
+  {
+    hideId,
+    hideCategory,
+    hideType,
+    hideModel
+  }: typeof craftHideRules | typeof editHideRules
+) {
+  const item = CS2Economy.get(idOrItem);
+  const { type, modelKey, id, loadoutCategory } = item;
+  await hideId.for(userId).notContains(id);
+  if (loadoutCategory !== undefined) {
+    await hideCategory.for(userId).notContains(loadoutCategory);
   }
   if (type !== undefined) {
-    await craftHideType.for(userId).notContains(type);
+    await hideType.for(userId).notContains(type);
   }
-  if (model !== undefined) {
-    await craftHideModel.for(userId).notContains(model);
+  if (modelKey !== undefined) {
+    await hideModel.for(userId).notContains(modelKey);
   }
 }
 
@@ -262,21 +342,16 @@ async function enforceCraftRulesForKeychainAttributes(
 }
 
 async function enforceCraftRulesForInventoryItem(
-  {
-    keychains,
-    stickers,
-    statTrak,
-    wear,
-    seed,
-    nameTag
-  }: Partial<CS2BaseInventoryItem>,
+  item: Partial<CS2BaseInventoryItem>,
   userId: string
 ) {
+  const { keychains, stickers, statTrak, wear, seed, nameTag } = item;
+  await enforceMaxAttachments(item, userId);
   if (keychains !== undefined && hasKeys(keychains)) {
     await craftAllowKeychains.for(userId).truthy();
     await craftHideType.for(userId).notContains(CS2ItemType.Keychain);
     for (const keychain of Object.values(keychains)) {
-      await enforceCraftRulesForItem(keychain.id, userId);
+      await enforceItemHideRules(keychain.id, userId, craftHideRules);
       await enforceCraftRulesForKeychainAttributes(keychain, userId);
     }
   }
@@ -284,7 +359,7 @@ async function enforceCraftRulesForInventoryItem(
     await craftAllowStickers.for(userId).truthy();
     await craftHideType.for(userId).notContains(CS2ItemType.Sticker);
     for (const sticker of Object.values(stickers)) {
-      await enforceCraftRulesForItem(sticker.id, userId);
+      await enforceItemHideRules(sticker.id, userId, craftHideRules);
       await enforceCraftRulesForStickerAttributes(sticker, userId);
     }
   }
@@ -299,23 +374,6 @@ async function enforceCraftRulesForInventoryItem(
   }
   if (nameTag !== undefined) {
     await craftAllowNametag.for(userId).truthy();
-  }
-}
-
-async function enforceEditRulesForItem(
-  idOrItem: number | CS2EconomyItem,
-  userId: string
-) {
-  const { category, type, model, id } = CS2Economy.get(idOrItem);
-  await editHideId.for(userId).notContains(id);
-  if (category !== undefined) {
-    await editHideCategory.for(userId).notContains(category);
-  }
-  if (type !== undefined) {
-    await editHideType.for(userId).notContains(type);
-  }
-  if (model !== undefined) {
-    await editHideModel.for(userId).notContains(model);
   }
 }
 
@@ -343,21 +401,17 @@ async function enforceEditRulesForKeychainAttributes(
 }
 
 async function enforceEditRulesForInventoryItem(
-  {
-    keychains,
-    stickers,
-    statTrak,
-    wear,
-    seed,
-    nameTag
-  }: Partial<ItemEditorAttributes>,
-  userId: string
+  attributes: Partial<ItemEditorAttributes>,
+  userId: string,
+  target: CS2InventoryItem
 ) {
+  const { keychains, stickers, statTrak, wear, seed, nameTag } = attributes;
+  await enforceMaxAttachments(attributes, userId, target);
   if (keychains !== undefined && hasKeys(keychains)) {
     await editAllowKeychains.for(userId).truthy();
     await editHideType.for(userId).notContains(CS2ItemType.Keychain);
     for (const keychain of Object.values(keychains)) {
-      await enforceEditRulesForItem(keychain.id, userId);
+      await enforceItemHideRules(keychain.id, userId, editHideRules);
       await enforceEditRulesForKeychainAttributes(keychain, userId);
     }
   }
@@ -365,7 +419,7 @@ async function enforceEditRulesForInventoryItem(
     await editAllowStickers.for(userId).truthy();
     await editHideType.for(userId).notContains(CS2ItemType.Sticker);
     for (const sticker of Object.values(stickers)) {
-      await enforceEditRulesForItem(sticker.id, userId);
+      await enforceItemHideRules(sticker.id, userId, editHideRules);
       await enforceEditRulesForStickerAttributes(sticker, userId);
     }
   }
@@ -431,7 +485,7 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
       for (const action of actions) {
         switch (action.type) {
           case SyncAction.Add:
-            await enforceCraftRulesForItem(action.item.id, userId);
+            await enforceItemHideRules(action.item.id, userId, craftHideRules);
             await enforceCraftRulesForInventoryItem(action.item, userId);
             inventory.add(action.item);
             break;
@@ -439,7 +493,7 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
             if (rawInventory === null && !addedFromCache) {
               for (const item of Object.values(action.data.items)) {
                 try {
-                  await enforceCraftRulesForItem(item.id, userId);
+                  await enforceItemHideRules(item.id, userId, craftHideRules);
                   await enforceCraftRulesForInventoryItem(item, userId);
                   inventory.add(item);
                 } catch {}
@@ -448,23 +502,47 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
             }
             break;
           case SyncAction.AddWithNametag:
-            await enforceCraftRulesForItem(action.itemId, userId);
+            await enforceItemHideRules(action.itemId, userId, craftHideRules);
             inventory.addWithNameTag(
               action.toolUid,
               action.itemId,
               action.nameTag
             );
             break;
-          case SyncAction.ApplyItemPatch:
+          case SyncAction.ApplyItemPatch: {
             await inventoryItemAllowApplyPatch.for(userId).truthy();
+            const count = inventory.get(action.targetUid).getPatchesCount();
+            assert(
+              isAttachmentCountAllowed({
+                current: count,
+                max: await inventoryItemMaxPatches.for(userId).get(),
+                next: count + 1
+              })
+            );
             inventory.applyItemPatch(
               action.targetUid,
               action.patchUid,
               action.slot
             );
             break;
-          case SyncAction.ApplyItemSticker:
+          }
+          case SyncAction.ApplyItemKeychain:
+            inventory.applyItemKeychain(action.targetUid, action.keychainUid, {
+              x: action.x,
+              y: action.y,
+              z: action.z
+            });
+            break;
+          case SyncAction.ApplyItemSticker: {
             await inventoryItemAllowApplySticker.for(userId).truthy();
+            const count = inventory.get(action.targetUid).getStickersCount();
+            assert(
+              isAttachmentCountAllowed({
+                current: count,
+                max: await inventoryItemMaxStickers.for(userId).get(),
+                next: count + 1
+              })
+            );
             inventory.applyItemSticker(action.targetUid, action.stickerUid, {
               schema: action.schema,
               x: action.x,
@@ -473,6 +551,7 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
               wear: action.wear
             });
             break;
+          }
           case SyncAction.Equip:
             inventory.equip(action.uid, action.team);
             break;
@@ -496,6 +575,12 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
           case SyncAction.RemoveItemSticker:
             await inventoryItemAllowRemoveSticker.for(userId).truthy();
             inventory.removeItemSticker(action.targetUid, action.index);
+            break;
+          case SyncAction.ExtractItemSticker:
+            inventory.unsealStickerSlab(action.uid);
+            break;
+          case SyncAction.SealItemSticker:
+            inventory.sealStickerSlab(action.toolUid, action.stickerUid);
             break;
           case SyncAction.ScrapeItemSticker:
             await inventoryItemAllowScrapeSticker.for(userId).truthy();
@@ -523,11 +608,30 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
             break;
           case SyncAction.Edit:
             await inventoryItemAllowEdit.for(userId).truthy();
-            await enforceEditRulesForInventoryItem(action.attributes, userId);
+            await enforceEditRulesForInventoryItem(
+              action.attributes,
+              userId,
+              inventory.get(action.uid)
+            );
             editInventoryItem(inventory, action.uid, action.attributes);
             break;
+          case SyncAction.AddWithKeychain:
+            await enforceItemHideRules(action.itemId, userId, craftHideRules);
+            inventory.addWithKeychain(action.keychainUid, action.itemId, {
+              x: action.x,
+              y: action.y,
+              z: action.z
+            });
+            break;
           case SyncAction.AddWithSticker:
-            await enforceCraftRulesForItem(action.itemId, userId);
+            await enforceItemHideRules(action.itemId, userId, craftHideRules);
+            assert(
+              isAttachmentCountAllowed({
+                current: 0,
+                max: await inventoryItemMaxStickers.for(userId).get(),
+                next: 1
+              })
+            );
             inventory.addWithSticker(action.stickerUid, action.itemId, {
               schema: action.schema,
               x: action.x,
@@ -538,6 +642,12 @@ export const action = api(async ({ request }: Route.ActionArgs) => {
             break;
           case SyncAction.RemoveAllItems:
             inventory.removeAll();
+            break;
+          case SyncAction.UnpackItem:
+            inventory.unpackItem(action.uid);
+            break;
+          case SyncAction.RemoveItemKeychain:
+            inventory.removeItemKeychain(action.targetUid, action.slot);
             break;
         }
       }

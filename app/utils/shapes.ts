@@ -5,69 +5,32 @@
 
 import { CS2Economy } from "@ianlucas/cs2-lib";
 import { z } from "zod";
-import {
-  validateKeychainOffset,
-  validateKeychainSeed,
-  validateStickerOffset,
-  validateStickerRotation,
-  validateStickerWear
-} from "./economy";
 
-export const nonNegativeInt = z.number().int().nonnegative().finite().safe();
-export const positiveInt = z.number().int().positive().finite().safe();
-export const nonNegativeFloat = z.number().nonnegative().finite();
-
-export const optionalStickerOffset = z
-  .number()
-  .finite()
-  .optional()
-  .refine(
-    (value) =>
-      value === undefined || validateStickerOffset(value, undefined, undefined)
-  );
-export const optionalStickerRotation = z
-  .number()
-  .finite()
-  .optional()
-  .refine((value) => value === undefined || validateStickerRotation(value));
-export const optionalStickerWear = z
-  .number()
-  .finite()
-  .optional()
-  .refine((value) => value === undefined || validateStickerWear(value));
+export const nonNegativeInt = z.number().int().nonnegative();
+export const positiveInt = z.number().int().positive();
+export const nonNegativeFloat = z.number().nonnegative();
+export const optionalNumber = z.number().optional();
 
 export const baseInventoryItemProps = {
   equipped: z.boolean().optional(),
   equippedCT: z.boolean().optional(),
   equippedT: z.boolean().optional(),
-  id: nonNegativeInt.refine((id) => CS2Economy.items.has(id)),
+  id: nonNegativeInt,
   nameTag: z
     .string()
     .max(20)
     .optional()
     .transform((nameTag) => CS2Economy.trimNameTag(nameTag))
-    .refine((nameTag) => CS2Economy.safeValidateNameTag(nameTag))
     .optional(),
   keychains: z
     .record(
       z.string(),
       z.object({
         id: nonNegativeInt,
-        seed: positiveInt
-          .optional()
-          .refine((seed) => seed === undefined || validateKeychainSeed(seed)),
-        x: z
-          .number()
-          .optional()
-          .refine((x) => x === undefined || validateKeychainOffset(x)),
-        y: z
-          .number()
-          .optional()
-          .refine((y) => y === undefined || validateKeychainOffset(y)),
-        z: z
-          .number()
-          .optional()
-          .refine((z) => z === undefined || validateKeychainOffset(z))
+        seed: positiveInt.optional(),
+        x: optionalNumber,
+        y: optionalNumber,
+        z: optionalNumber
       })
     )
     .optional(),
@@ -79,43 +42,15 @@ export const baseInventoryItemProps = {
       z.string(),
       z.object({
         id: nonNegativeInt,
-        rotation: optionalStickerRotation,
-        wear: optionalStickerWear,
+        rotation: optionalNumber,
+        wear: optionalNumber,
         schema: z.number().int().min(0).optional(),
-        x: optionalStickerOffset,
-        y: optionalStickerOffset
+        x: optionalNumber,
+        y: optionalNumber
       })
     )
     .optional(),
-  wear: nonNegativeFloat
-    .optional()
-    .refine((wear) => wear === undefined || CS2Economy.safeValidateWear(wear))
+  wear: nonNegativeFloat.optional()
 };
-
-const baseServerInventoryItemProps = {
-  ...baseInventoryItemProps,
-  statTrak: z
-    .number()
-    .optional()
-    .refine(
-      (statTrak) =>
-        statTrak === undefined || CS2Economy.safeValidateStatTrak(statTrak)
-    )
-};
-
-const serverInventoryItemProps = {
-  ...baseServerInventoryItemProps,
-  containerId: nonNegativeInt.optional(),
-  storage: z
-    .record(z.string(), z.object(baseServerInventoryItemProps))
-    .optional()
-};
-
-export const serverInventoryItemShape = z.object(serverInventoryItemProps);
-
-export const serverInventoryShape = z.object({
-  items: z.record(z.string(), serverInventoryItemShape),
-  version: nonNegativeInt
-});
 
 export const teamShape = z.literal(0).or(z.literal(2)).or(z.literal(3));

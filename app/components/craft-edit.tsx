@@ -10,6 +10,7 @@ import {
 } from "@ianlucas/cs2-lib";
 import { useState } from "react";
 import { useRules, useTranslate } from "./app-context";
+import { useEditItemFilter } from "./hooks/use-item-hide-filters";
 import { ItemEditor, ItemEditorAttributes } from "./item-editor";
 import { ModalButton } from "./modal-button";
 
@@ -40,12 +41,13 @@ export function CraftEdit({
     editAllowStickerX,
     editAllowStickerY,
     editAllowWear,
-    editHideCategory,
-    editHideId,
-    editHideType
+    editHideType,
+    inventoryItemMaxPatches,
+    inventoryItemMaxStickers
   } = useRules();
 
   const [attributes, setAttributes] = useState<ItemEditorAttributes>();
+  const filterStickerOrPatch = useEditItemFilter();
 
   const isHideNameTag = !editAllowNametag;
   const isHideSeed = !editAllowSeed;
@@ -62,10 +64,14 @@ export function CraftEdit({
   const isHideKeychainZ = !editAllowKeychainZ;
 
   const isHidePatches =
-    !editAllowPatches || editHideType.includes(CS2ItemType.Patch);
+    !editAllowPatches ||
+    editHideType.includes(CS2ItemType.Patch) ||
+    inventoryItemMaxPatches === 0;
 
   const isHideStickers =
-    !editAllowStickers || editHideType.includes(CS2ItemType.Sticker);
+    !editAllowStickers ||
+    editHideType.includes(CS2ItemType.Sticker) ||
+    inventoryItemMaxStickers === 0;
 
   const isHideKeychains =
     !editAllowKeychains || editHideType.includes(CS2ItemType.Keychain);
@@ -74,19 +80,6 @@ export function CraftEdit({
     if (attributes !== undefined) {
       onSubmit(attributes);
     }
-  }
-
-  function filterStickerOrPatch(item: CS2EconomyItem) {
-    if (editHideId.includes(item.id)) {
-      return false;
-    }
-    if (
-      item.category !== undefined &&
-      editHideCategory.includes(item.category)
-    ) {
-      return false;
-    }
-    return true;
   }
 
   return (

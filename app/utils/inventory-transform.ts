@@ -36,7 +36,8 @@ export function transform(
   }
 ) {
   const isEquippable =
-    (item.model === undefined || !nonEquippable.models.includes(item.model)) &&
+    (item.modelKey === undefined ||
+      !nonEquippable.models.includes(item.modelKey)) &&
     !nonEquippable.types.includes(item.type);
 
   if (!isEquippable) {
@@ -66,14 +67,18 @@ export function sortByName(
   return a.item.name.localeCompare(b.item.name);
 }
 
+function getTypeOrder(item: CS2InventoryItem) {
+  if (item.isStickerDisplayCase()) {
+    return INVENTORY_ITEM_TYPE_ORDER[CS2ItemType.Sticker] + 0.5;
+  }
+  return INVENTORY_ITEM_TYPE_ORDER[item.type];
+}
+
 export function sortByType(
   a: TransformedInventoryItem,
   b: TransformedInventoryItem
 ) {
-  return (
-    INVENTORY_ITEM_TYPE_ORDER[a.item.type] -
-    INVENTORY_ITEM_TYPE_ORDER[b.item.type]
-  );
+  return getTypeOrder(a.item) - getTypeOrder(b.item);
 }
 
 export function sortByEquipped(
@@ -103,8 +108,8 @@ export function sortByQuality(
   b: TransformedInventoryItem
 ) {
   return (
-    CS2_RARITY_ORDER.indexOf(CS2RarityColorName[b.item.rarity]) -
-    CS2_RARITY_ORDER.indexOf(CS2RarityColorName[a.item.rarity])
+    CS2_RARITY_ORDER.indexOf(CS2RarityColorName[b.item.rarityColor]) -
+    CS2_RARITY_ORDER.indexOf(CS2RarityColorName[a.item.rarityColor])
   );
 }
 

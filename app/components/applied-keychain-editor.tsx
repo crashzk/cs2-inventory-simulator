@@ -7,19 +7,18 @@ import { faArrowRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { CS2EconomyItem } from "@ianlucas/cs2-lib";
 import {
+  CS2_INVENTORY_RULES,
+  CS2_KEYCHAIN_POSITION_FACTOR,
   CS2_MAX_KEYCHAIN_SEED,
   CS2_MIN_KEYCHAIN_SEED
 } from "@ianlucas/cs2-lib";
 import clsx from "clsx";
 import { useEffect } from "react";
 import {
-  keychainOffsetFactor,
-  keychainOffsetStringMaxLen,
-  keychainOffsetToString,
+  getDefaultKeychainPosition,
+  keychainPositionStringMaxLen,
+  keychainPositionToString,
   keychainSeedStringMaxLen,
-  maxKeychainOffset,
-  minKeychainOffset,
-  validateKeychainOffset,
   validateKeychainSeed
 } from "~/utils/economy";
 import { useTranslate } from "./app-context";
@@ -32,6 +31,7 @@ import { confirm } from "./modal-generic";
 
 export function AppliedKeychainEditor({
   className,
+  forItem,
   isHideKeychainSeed,
   isHideKeychainX,
   isHideKeychainY,
@@ -41,6 +41,7 @@ export function AppliedKeychainEditor({
   value
 }: {
   className?: string;
+  forItem?: CS2EconomyItem;
   isHideKeychainSeed?: boolean;
   isHideKeychainX?: boolean;
   isHideKeychainY?: boolean;
@@ -51,6 +52,13 @@ export function AppliedKeychainEditor({
 }) {
   const translate = useTranslate();
   const attributes = useKeyValues(value);
+  const keychainPositionBounds = forItem?.getKeychainPositionBounds();
+  const keychainPositionXMin = keychainPositionBounds?.x.min;
+  const keychainPositionXMax = keychainPositionBounds?.x.max;
+  const keychainPositionYMin = keychainPositionBounds?.y.min;
+  const keychainPositionYMax = keychainPositionBounds?.y.max;
+  const keychainPositionZMin = keychainPositionBounds?.z.min;
+  const keychainPositionZMax = keychainPositionBounds?.z.max;
 
   async function handleReset() {
     if (
@@ -63,9 +71,18 @@ export function AppliedKeychainEditor({
     ) {
       attributes.setValue({
         seed: CS2_MIN_KEYCHAIN_SEED,
-        x: 0,
-        y: 0,
-        z: 0
+        x: getDefaultKeychainPosition(
+          keychainPositionXMin,
+          keychainPositionXMax
+        ),
+        y: getDefaultKeychainPosition(
+          keychainPositionYMin,
+          keychainPositionYMax
+        ),
+        z: getDefaultKeychainPosition(
+          keychainPositionZMin,
+          keychainPositionZMax
+        )
       });
     }
   }
@@ -76,7 +93,7 @@ export function AppliedKeychainEditor({
 
   return (
     <div className={clsx("m-auto text-sm select-none", className)}>
-      <EditorItemDisplay item={item} />
+      <EditorItemDisplay item={item} seed={attributes.value.seed} />
       <div className="space-y-1.5">
         {!isHideKeychainSeed && (
           <EditorLabel label={translate("EditorPattern")}>
@@ -95,60 +112,84 @@ export function AppliedKeychainEditor({
             />
           </EditorLabel>
         )}
-        {!isHideKeychainX && (
-          <EditorLabel label={translate("EditorKeychainX")}>
-            <EditorStepRangeWithInput
-              inputStyles="w-24 min-w-0"
-              max={maxKeychainOffset}
-              maxLength={keychainOffsetStringMaxLen}
-              min={minKeychainOffset}
-              onChange={attributes.update("x")}
-              randomizable
-              step={keychainOffsetFactor}
-              stepRangeStyles="flex-1"
-              transform={keychainOffsetToString}
-              type="float"
-              validate={validateKeychainOffset}
-              value={attributes.value.x}
-            />
-          </EditorLabel>
-        )}
-        {!isHideKeychainY && (
-          <EditorLabel label={translate("EditorKeychainY")}>
-            <EditorStepRangeWithInput
-              inputStyles="w-24 min-w-0"
-              max={maxKeychainOffset}
-              maxLength={keychainOffsetStringMaxLen}
-              min={minKeychainOffset}
-              onChange={attributes.update("y")}
-              randomizable
-              step={keychainOffsetFactor}
-              stepRangeStyles="flex-1"
-              transform={keychainOffsetToString}
-              type="float"
-              validate={validateKeychainOffset}
-              value={attributes.value.y}
-            />
-          </EditorLabel>
-        )}
-        {!isHideKeychainZ && (
-          <EditorLabel label={translate("EditorKeychainZ")}>
-            <EditorStepRangeWithInput
-              inputStyles="w-24 min-w-0"
-              max={maxKeychainOffset}
-              maxLength={keychainOffsetStringMaxLen}
-              min={minKeychainOffset}
-              onChange={attributes.update("z")}
-              randomizable
-              step={keychainOffsetFactor}
-              stepRangeStyles="flex-1"
-              transform={keychainOffsetToString}
-              type="float"
-              validate={validateKeychainOffset}
-              value={attributes.value.z}
-            />
-          </EditorLabel>
-        )}
+        {!isHideKeychainX &&
+          keychainPositionXMin !== undefined &&
+          keychainPositionXMax !== undefined && (
+            <EditorLabel label={translate("EditorKeychainX")}>
+              <EditorStepRangeWithInput
+                inputStyles="w-24 min-w-0"
+                max={keychainPositionXMax}
+                maxLength={keychainPositionStringMaxLen(
+                  keychainPositionXMin,
+                  keychainPositionXMax
+                )}
+                min={keychainPositionXMin}
+                onChange={attributes.update("x")}
+                randomizable
+                step={CS2_KEYCHAIN_POSITION_FACTOR}
+                stepRangeStyles="flex-1"
+                transform={keychainPositionToString}
+                type="float"
+                validate={(value) =>
+                  forItem !== undefined &&
+                  CS2_INVENTORY_RULES.keychainPositionX.check(value, forItem)
+                }
+                value={attributes.value.x}
+              />
+            </EditorLabel>
+          )}
+        {!isHideKeychainY &&
+          keychainPositionYMin !== undefined &&
+          keychainPositionYMax !== undefined && (
+            <EditorLabel label={translate("EditorKeychainY")}>
+              <EditorStepRangeWithInput
+                inputStyles="w-24 min-w-0"
+                max={keychainPositionYMax}
+                maxLength={keychainPositionStringMaxLen(
+                  keychainPositionYMin,
+                  keychainPositionYMax
+                )}
+                min={keychainPositionYMin}
+                onChange={attributes.update("y")}
+                randomizable
+                step={CS2_KEYCHAIN_POSITION_FACTOR}
+                stepRangeStyles="flex-1"
+                transform={keychainPositionToString}
+                type="float"
+                validate={(value) =>
+                  forItem !== undefined &&
+                  CS2_INVENTORY_RULES.keychainPositionY.check(value, forItem)
+                }
+                value={attributes.value.y}
+              />
+            </EditorLabel>
+          )}
+        {!isHideKeychainZ &&
+          keychainPositionZMin !== undefined &&
+          keychainPositionZMax !== undefined && (
+            <EditorLabel label={translate("EditorKeychainZ")}>
+              <EditorStepRangeWithInput
+                inputStyles="w-24 min-w-0"
+                max={keychainPositionZMax}
+                maxLength={keychainPositionStringMaxLen(
+                  keychainPositionZMin,
+                  keychainPositionZMax
+                )}
+                min={keychainPositionZMin}
+                onChange={attributes.update("z")}
+                randomizable
+                step={CS2_KEYCHAIN_POSITION_FACTOR}
+                stepRangeStyles="flex-1"
+                transform={keychainPositionToString}
+                type="float"
+                validate={(value) =>
+                  forItem !== undefined &&
+                  CS2_INVENTORY_RULES.keychainPositionZ.check(value, forItem)
+                }
+                value={attributes.value.z}
+              />
+            </EditorLabel>
+          )}
         <div className="flex justify-end gap-1">
           <ButtonWithTooltip
             tooltip={translate("EditorReset")}

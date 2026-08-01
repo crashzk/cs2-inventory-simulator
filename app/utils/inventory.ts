@@ -9,11 +9,12 @@ import {
   CS2EconomyItem,
   CS2Inventory,
   CS2InventoryItem,
+  CS2InventorySpec,
   CS2ItemType
 } from "@ianlucas/cs2-lib";
 import lzstring from "lz-string";
 import type { ItemEditorAttributes } from "~/components/item-editor";
-import { serverInventoryShape } from "./shapes";
+import { safeParseJson } from "./misc";
 
 export const UNLOCKABLE_ITEM_TYPE: CS2ItemType[] = [
   CS2ItemType.Container,
@@ -41,12 +42,45 @@ export const INSPECTABLE_ITEM_TYPE: CS2ItemType[] = [
   CS2ItemType.Weapon
 ];
 
-export function parseInventory(inventory?: string | null) {
+export function safeLoadInventory(
+  rawInventory: string | null,
+  options?: Partial<CS2InventorySpec>
+) {
+  if (rawInventory === null) {
+    return undefined;
+  }
   try {
-    return serverInventoryShape.parse(CS2Inventory.parse(inventory));
+    return CS2Inventory.load(rawInventory, {
+      dropEmptyDefaultItems: true,
+      ...options
+    });
   } catch {
     return undefined;
   }
+}
+
+export function loadOrCreateInventory(
+  rawInventory: string | null,
+  options?: Partial<CS2InventorySpec>
+) {
+  return safeLoadInventory(rawInventory, options) ?? new CS2Inventory(options);
+}
+
+export function hasInventoryContent(
+  rawInventory: string | null
+): rawInventory is string {
+  if (rawInventory === null || rawInventory.trim().length === 0) {
+    return false;
+  }
+  const data = safeParseJson(rawInventory);
+  if (typeof data !== "object" || data === null || Array.isArray(data)) {
+    return true;
+  }
+  const { items } = data as { items?: unknown };
+  if (typeof items !== "object" || items === null) {
+    return false;
+  }
+  return Object.keys(items).length > 0;
 }
 
 const fakeInventory = new CS2Inventory();
@@ -78,7 +112,7 @@ export function getFreeItemsToDisplay(hideFreeItems = false) {
     return [];
   }
   return CS2Economy.filterItems({
-    free: true
+    isDefault: true
   })
     .filter(
       (item) =>
@@ -91,6 +125,23 @@ export function getFreeItemsToDisplay(hideFreeItems = false) {
       }),
       uid: -1 * (index + 1)
     }));
+}
+
+export const CHARM_DETACHMENTS_DISPLAY_UID = -9999;
+
+export function getCharmDetachmentsToDisplay(inventory: CS2Inventory) {
+  if (inventory.getAll().some((item) => item.isCharmDetachment())) {
+    return [];
+  }
+  return [
+    {
+      equipped: [],
+      item: createFakeInventoryItem(CS2Economy.getCharmDetachment(), {
+        uid: CHARM_DETACHMENTS_DISPLAY_UID
+      }),
+      uid: CHARM_DETACHMENTS_DISPLAY_UID
+    }
+  ];
 }
 
 export function getInventoryItemShareUrl(
