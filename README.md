@@ -1,4 +1,4 @@
-﻿# [cs2.zkservidores.com](https://cs2.zkservidores.com)
+﻿# [skinchanger.zkservidores.com](https://skinchanger.zkservidores.com)
 **Skinchanger** used on **ZK Servidores™** servers.
 
 <img src="https://raw.githubusercontent.com/crashzk/cs2-inventory-simulator/refs/heads/main/screenshot1.png" alt="Skinchanger Homepage" title="Skinchanger ZK Servidores™" />
@@ -14,3 +14,4 @@
 - **Storage Units:** Organize and store items in Storage Units.
 - **API for Developers:** Fetch a user inventory and equipped items by using HTTP endpoints.
 - **Partial support for mobile devices**
+- 
