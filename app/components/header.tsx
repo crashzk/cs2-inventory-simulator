@@ -136,7 +136,7 @@ export function Header({
                     />
                   )}
                   <div className="gap-4 lg:flex lg:flex-1 lg:justify-end">
-                    <DonateHeaderLink />
+                    {!user.isVip && <DonateHeaderLink />}
                     <HeaderLink to="/settings" onClick={closeMenu}>
                       <span className="text-neutral-400">
                         {translate("HeaderSignedInAsLabel")}

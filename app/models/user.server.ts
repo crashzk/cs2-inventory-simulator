@@ -76,19 +76,31 @@ export async function upsertUser(user: {
 }
 
 export async function findUniqueUser(userId: string) {
-  return {
-    ...(await prisma.user.findUniqueOrThrow({
-      select: {
-        avatar: true,
-        createdAt: true,
-        id: true,
-        name: true,
-        updatedAt: true
-      },
-      where: {
-        id: userId
+  const user = await prisma.user.findUniqueOrThrow({
+    select: {
+      avatar: true,
+      createdAt: true,
+      id: true,
+      name: true,
+      updatedAt: true,
+      _count: {
+        select: {
+          groups: true
+        }
       }
-    })),
+    },
+    where: {
+      id: userId
+    }
+  });
+
+  return {
+    avatar: user.avatar,
+    createdAt: user.createdAt,
+    id: user.id,
+    name: user.name,
+    updatedAt: user.updatedAt,
+    isVip: user._count.groups > 0,
     inventory: await getUserInventory(userId),
     syncedAt: await getUserSyncedAt(userId)
   };
