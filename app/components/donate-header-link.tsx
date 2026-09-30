@@ -10,18 +10,18 @@ import { HeaderLink } from "./header-link";
 
 export function DonateHeaderLink() {
   const translate = useTranslate();
-  /* Consider donating to the project on donate.cstrike.app if you are
+  /* Consider buying me a coffee on buymeacoffee.com/ianlucas if you are
   self-hosting this app! */
   return (
     typeof window !== "undefined" &&
     isOurHostname() && (
       <HeaderLink
-        className="font-bold"
+        className="group rounded-sm font-bold text-amber-300 ring-1 ring-amber-300/40 hover:text-amber-200 hover:ring-amber-300/80 active:bg-amber-300/20"
         icon={faStar}
+        iconStyles="h-4 origin-bottom group-hover:animate-wiggle"
         label={translate("HeaderDonate")}
         target="_blank"
         to="https://zkservidores.com/store"
-      />
     )
   );
 }

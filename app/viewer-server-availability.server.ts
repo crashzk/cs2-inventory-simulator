@@ -9,6 +9,9 @@ import {
   viewerEnabled,
   viewerKey
 } from "~/models/rule.server";
+import { Loop } from "~/shared/loop";
+import { getErrorMessage } from "~/shared/misc";
+import { logError } from "~/shared/monitoring";
 import { singleton } from "~/singleton.server";
 import {
   DEFAULT_VIEWER_EMBED_URL,
@@ -86,37 +89,6 @@ function parseCatalog(data: unknown): ViewerCatalog | undefined {
   return { maxId: catalog.maxId, holes };
 }
 
-function describeError(error: unknown) {
-  return error instanceof Error ? error.message : String(error);
-}
-
-/**
- * A self-rescheduling task: `tick` returns the delay until its next run, or
- * `undefined` to stop. `start` is idempotent.
- */
-class Loop {
-  private running = false;
-
-  constructor(private readonly tick: () => Promise<number | undefined>) {}
-
-  start() {
-    if (this.running) {
-      return;
-    }
-    this.running = true;
-    void this.run();
-  }
-
-  private async run() {
-    const delay = await this.tick();
-    if (delay === undefined) {
-      this.running = false;
-      return;
-    }
-    setTimeout(() => void this.run(), delay);
-  }
-}
-
 /**
  * Decides, per request, whether the client may use the 3D viewer.
  *
@@ -164,9 +136,9 @@ export class ViewerServerAvailability {
     try {
       return await viewerEnabled.isTrueForAnyone();
     } catch (error) {
-      console.warn(
-        `3D viewer: unable to read the viewerEnabled rule. ${describeError(error)}`
-      );
+      logError("3D viewer: unable to read the viewerEnabled rule.", {
+        error
+      });
       // Keep the loops (and their last answers) through a database hiccup.
       return true;
     }
@@ -190,14 +162,14 @@ export class ViewerServerAvailability {
         failure = `HTTP ${response.status}`;
       }
     } catch (error) {
-      failure = describeError(error);
+      failure = getErrorMessage(error);
     }
     if (catalog !== undefined) {
       this.catalog = { status: "ok", catalog };
       return VIEWER_CATALOG_REFRESH_MS;
     }
     if (this.catalog.status !== "failed") {
-      console.warn(`3D viewer: catalog fetch failed (${failure}).`);
+      logError("3D viewer: catalog fetch failed.", { extra: { failure } });
     }
     this.catalog = { status: "failed" };
     return VIEWER_CATALOG_RETRY_MS;
@@ -214,7 +186,7 @@ export class ViewerServerAvailability {
       hostname = new URL(await steamCallbackUrl.get()).hostname;
       key = await viewerKey.get();
     } catch (error) {
-      return this.setRateLimitFailure(describeError(error));
+      return this.setRateLimitFailure(getErrorMessage(error));
     }
     if (key.trim() !== "" || isTrustedHostname(hostname)) {
       this.rateLimit = { status: "ok" };
@@ -229,7 +201,7 @@ export class ViewerServerAvailability {
         signal: AbortSignal.timeout(VIEWER_FETCH_TIMEOUT_MS)
       });
     } catch (error) {
-      return this.setRateLimitFailure(describeError(error));
+      return this.setRateLimitFailure(getErrorMessage(error));
     }
     if (response.status === 429) {
       const retryAfterSeconds = Number(response.headers.get("Retry-After"));
@@ -248,7 +220,7 @@ export class ViewerServerAvailability {
     try {
       body = (await response.json()) as RateLimitResponse;
     } catch (error) {
-      return this.setRateLimitFailure(describeError(error));
+      return this.setRateLimitFailure(getErrorMessage(error));
     }
     const { limit, remaining, resetAt } = body;
     if (
@@ -280,10 +252,10 @@ export class ViewerServerAvailability {
     detail?: string
   ) {
     if (this.rateLimit.status !== status) {
-      console.warn(
-        `3D viewer: ${status}${detail !== undefined ? ` (${detail})` : ""}, ` +
-          `checking again in ${Math.round(wait / 1000)}s.`
-      );
+      // `status` is a fixed set, so it can stay in the message.
+      logError(`3D viewer: paused (${status}).`, {
+        extra: { detail, retryInSeconds: Math.round(wait / 1000) }
+      });
     }
     this.rateLimit = { status, retryAt: Date.now() + wait };
     return wait;

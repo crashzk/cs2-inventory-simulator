@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ViewerItemInput } from "~/data/viewer";
+import { ViewerItemInput } from "~/viewer";
 import {
   ICON_API_CALLS_PER_MINUTE,
   backOffIconNetwork,
@@ -12,7 +12,7 @@ import {
   loadIconBudget,
   setIconBudgetCooldown,
   spendIconBudget
-} from "./item-icon-budget";
+} from "./item-icon-budget.client";
 import {
   IconGeneratorRole,
   claimIconGeneratorRole,
@@ -21,14 +21,14 @@ import {
   recycleIconGenerator,
   setIconGeneratorWanted,
   subscribeIconGeneratorRole
-} from "./item-icon-generator-role";
+} from "./item-icon-generator-role.client";
 import {
   hasIcon,
   markIconUnavailable,
   publishIcon,
   releaseIcon,
   retractIconUnavailable
-} from "./item-icon-registry";
+} from "./item-icon-registry.client";
 import {
   IconEntry,
   deleteIcon,
@@ -36,17 +36,18 @@ import {
   readIcon,
   writeIcon,
   writeIconFailure
-} from "./item-icon-store";
+} from "./item-icon-store.client";
 import {
   isIconTileVisible,
   subscribeIconTileVisibility
-} from "./item-icon-visibility";
-import { VIEWER_CAPTURE_TIMEOUT_MS } from "./viewer-api";
+} from "./item-icon-visibility.client";
+import { logError, logWarning } from "./shared/monitoring";
 import type {
   ViewerApi,
   ViewerCaptureError,
   ViewerCaptured
-} from "./viewer-api";
+} from "./viewer-api.client";
+import { VIEWER_CAPTURE_TIMEOUT_MS } from "./viewer-api.client";
 
 export const ICON_CAPTURE_TIMEOUT_MS = VIEWER_CAPTURE_TIMEOUT_MS;
 export const ICON_IDLE_TEARDOWN_MS = 30_000;
@@ -324,8 +325,9 @@ async function rejectItem(
   entry: Pending,
   error: ViewerCaptureError
 ): Promise<void> {
-  console.warn(
-    `[InventorySimulator] The 3D viewer could not render an item's icon (${error}): ${entry.key}`
+  logWarning(
+    `[InventorySimulator] The 3D viewer could not render an item's icon (${error}).`,
+    { extra: { key: entry.key } }
   );
   await writeIconFailure(entry.key, error, Date.now() + ITEM_RETRY_AFTER_MS);
   await countWrite();
@@ -372,8 +374,8 @@ async function run(generator: ViewerApi, entry: Pending): Promise<void> {
       return;
     }
     if (error !== undefined && SESSION_ERRORS.has(error)) {
-      console.error(
-        `[InventorySimulator] 3D inventory icons disabled: the viewer refused to capture (${error}). `
+      logError(
+        `[InventorySimulator] 3D inventory icons disabled: the viewer refused to capture (${error}).`
       );
       disableIconGeneration();
       return;
