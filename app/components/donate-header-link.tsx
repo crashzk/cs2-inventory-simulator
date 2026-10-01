@@ -22,6 +22,7 @@ export function DonateHeaderLink() {
         label={translate("HeaderDonate")}
         target="_blank"
         to="https://zkservidores.com/store"
+      />
     )
   );
 }
