@@ -216,6 +216,7 @@ export async function getUserBasicData(userId: string) {
     (await prisma.user.findFirst({
       select: {
         avatar: true,
+        id: true,
         name: true
       },
       where: {
