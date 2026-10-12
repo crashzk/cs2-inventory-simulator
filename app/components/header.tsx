@@ -162,7 +162,7 @@ export function Header({
                       to="/sign-out"
                     />
                   )}
-                  <div className="gap-4 lg:flex lg:flex-1 lg:justify-end">
+                  <div className="gap-2 lg:flex lg:flex-1 lg:justify-end">
                     {!user.isVip && <DonateHeaderLink />}
                     <HeaderLink to="/settings" onClick={closeMenu}>
                       <span className="max-w-[256px] truncate">
