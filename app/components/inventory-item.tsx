@@ -26,6 +26,7 @@ import {
 import { TransformedInventoryItem } from "~/shared/inventory-transform";
 import { has } from "~/shared/misc";
 import { format } from "~/shared/number";
+import { SoundName } from "~/sound-events";
 import { useInventory, useRules, useTranslate, useUser } from "./app-context";
 import {
   InventoryItemContextButton,
@@ -36,10 +37,12 @@ import { InventoryItemTooltip } from "./inventory-item-tooltip";
 import { alert, confirm } from "./modal-generic";
 
 export function InventoryItem({
+  clickSound,
   disableContextMenu,
   disableHover,
   draggable,
   equipped,
+  foreign,
   inspectOnly,
   item,
   onApplyPatch,
@@ -70,13 +73,17 @@ export function InventoryItem({
   ownApplicableKeychains,
   ownApplicablePatches,
   ownApplicableStickers,
+  rightClickContextMenu,
   selected,
   uid
 }: TransformedInventoryItem & {
+  clickSound?: SoundName;
   disableContextMenu?: boolean;
   disableHover?: boolean;
   draggable?: boolean;
-  /** For other people's items: only offers the inspect actions. */
+  /** Not from the user's inventory, e.g. on someone's profile. */
+  foreign?: boolean;
+  /** Only offers the inspect actions. */
   inspectOnly?: boolean;
   onApplyPatch?: (uid: number) => void;
   onApplySticker?: (uid: number) => void;
@@ -106,6 +113,8 @@ export function InventoryItem({
   ownApplicableKeychains?: boolean;
   ownApplicablePatches?: boolean;
   ownApplicableStickers?: boolean;
+  /** Opens the context menu on right-click, leaving left-click to `onClick`. */
+  rightClickContextMenu?: boolean;
   selected?: boolean;
 }) {
   const [, copyToClipboard] = useCopyToClipboard();
@@ -149,7 +158,7 @@ export function InventoryItem({
     ref,
     setIsClickOpen,
     setIsHoverOpen
-  } = useInventoryItemFloating();
+  } = useInventoryItemFloating({ rightClick: rightClickContextMenu });
 
   const isFreeInventoryItem = uid < 0;
 
@@ -288,9 +297,10 @@ export function InventoryItem({
         {...getHoverReferenceProps(getClickReferenceProps())}
       >
         <InventoryItemTile
+          clickSound={clickSound}
           draggable={draggable}
           equipped={equipped}
-          foreign={inspectOnly}
+          foreign={foreign}
           item={item}
           preview
           selected={selected}
