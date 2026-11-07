@@ -162,7 +162,21 @@ export function Header({
                   </div>
                 </>
               ) : (
-                <>
+                <div className="gap-2 lg:flex lg:flex-1 lg:items-center lg:justify-end">
+                  {!user.isVip && <DonateHeaderLink />}
+                  <HeaderLink
+                    to="/settings"
+                    onClick={closeMenu}
+                    tabSound="tab_settings_settings"
+                  >
+                    <span className="max-w-[256px] truncate">{user.name}</span>
+                    <img
+                      className="size-6 rounded-full"
+                      src={user.avatar}
+                      draggable={false}
+                      alt={user.name}
+                    />
+                  </HeaderLink>
                   {!appHideAuth && (
                     <HeaderLink
                       collapsed={isDesktop}
@@ -172,25 +186,7 @@ export function Header({
                       to="/sign-out"
                     />
                   )}
-                  <div className="gap-2 lg:flex lg:flex-1 lg:items-center lg:justify-end">
-                    {!user.isVip && <DonateHeaderLink />}
-                    <HeaderLink
-                      to="/settings"
-                      onClick={closeMenu}
-                      tabSound="tab_settings_settings"
-                    >
-                      <span className="max-w-[256px] truncate">
-                        {user.name}
-                      </span>
-                      <img
-                        className="size-6 rounded-full"
-                        src={user.avatar}
-                        draggable={false}
-                        alt={user.name}
-                      />
-                    </HeaderLink>
-                  </div>
-                </>
+                </div>
               )}
             </nav>
           </div>
